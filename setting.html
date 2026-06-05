@@ -1,0 +1,627 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Bühler Group</title>
+<style>
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: sans-serif; }
+
+  /* NAVBAR */
+  .navbar {
+    background: linear-gradient(to right, #003b5c, #00a6a6, #a8d400);
+    padding: 0 24px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 64px;
+    position: relative;
+    z-index: 1000;
+  }
+
+  /* LOGO — slides away when search opens */
+  .navbar-logo {
+    flex-shrink: 0;
+    overflow: hidden;
+    max-width: 150px;
+    transition: max-width 0.38s cubic-bezier(0.4,0,0.2,1), opacity 0.3s ease;
+    text-decoration: none;
+  }
+  .navbar-logo.hidden {
+    max-width: 0;
+    opacity: 0;
+    pointer-events: none;
+  }
+  .navbar-logo img { height: 36px; width: auto; display: block; }
+  .navbar-logo span { color: white; font-size: 22px; font-weight: 700; letter-spacing: -0.5px; white-space: nowrap; }
+
+  /* NAV MENU */
+  .nav-menu {
+    display: flex;
+    list-style: none;
+    margin: 0 12px;
+    flex: 1;
+    justify-content: center;
+  }
+  .nav-menu > li { position: relative; }
+  .nav-menu > li > a {
+    display: block;
+    padding: 0 13px;
+    height: 64px;
+    line-height: 64px;
+    color: white;
+    text-decoration: none;
+    font-size: 15px;
+    white-space: nowrap;
+    transition: background 0.2s;
+    border-radius: 4px;
+  }
+  .nav-menu > li > a:hover { background: rgba(255,255,255,0.18); }
+
+  /* DROPDOWN PANEL — full width */
+  .dropdown-panel {
+    position: fixed;
+    top: 64px;
+    left: 0;
+    right: 0;
+    background: white;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.12);
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(-8px);
+    transition: opacity 0.25s, visibility 0.25s, transform 0.25s;
+    z-index: 999;
+    max-height: 80vh;
+    overflow-y: auto;
+  }
+  .nav-menu > li:hover .dropdown-panel {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+  }
+  .dropdown-inner {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 36px 40px 40px;
+    display: flex;
+    gap: 40px;
+  }
+  .dropdown-links-section { flex: 0 0 auto; }
+  .dropdown-links-title {
+    font-size: 12px;
+    font-weight: 700;
+    color: #003b5c;
+    text-transform: uppercase;
+    letter-spacing: 0.6px;
+    margin-bottom: 18px;
+  }
+  .dropdown-columns { display: flex; gap: 48px; }
+  .dropdown-col { display: flex; flex-direction: column; gap: 14px; min-width: 160px; }
+  .dropdown-col a { font-size: 15px; color: #333; text-decoration: none; line-height: 1.4; transition: color 0.2s; }
+  .dropdown-col a:hover { color: #00a6a6; }
+  .dropdown-col a.bold { font-weight: 600; }
+  .dropdown-divider { width: 1px; background: #e0e0e0; align-self: stretch; flex-shrink: 0; }
+  .dropdown-highlights { flex: 1; }
+  .dropdown-highlights-title { font-size: 16px; font-weight: 600; color: #003b5c; margin-bottom: 18px; }
+  .highlights-grid { display: flex; gap: 16px; }
+  .highlight-card {
+    flex: 1; border-radius: 10px; overflow: hidden; border: 1px solid #eee;
+    transition: box-shadow 0.2s, transform 0.2s; background: white;
+    text-decoration: none; display: block;
+  }
+  .highlight-card:hover { box-shadow: 0 4px 16px rgba(0,0,0,0.12); transform: translateY(-2px); }
+  .highlight-card img { width: 100%; height: 150px; object-fit: cover; display: block; }
+  .highlight-card .hl-text { padding: 12px 14px; font-size: 14px; color: #333; line-height: 1.4; }
+
+  /* ===== RIGHT NAV ===== */
+  .nav-right {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-shrink: 0;
+  }
+
+  /* Search wrap */
+  .search-wrap { display: flex; align-items: center; gap: 8px; }
+
+  /* Expanding input — slides in from the right of the button */
+  .search-expand {
+    width: 0;
+    opacity: 0;
+    overflow: hidden;
+    transition: width 0.38s cubic-bezier(0.4,0,0.2,1), opacity 0.28s;
+    display: flex;
+    align-items: center;
+  }
+  .search-expand.open { width: 220px; opacity: 1; }
+  .search-expand input {
+    width: 100%;
+    height: 36px;
+    border: none;
+    border-bottom: 2px solid rgba(255,255,255,0.85);
+    background: transparent;
+    color: white;
+    font-size: 15px;
+    outline: none;
+    padding: 0 6px;
+    caret-color: white;
+  }
+  .search-expand input::placeholder { color: rgba(255,255,255,0.6); }
+
+  /* Plain search icon button — no border, just icon */
+  .search-icon-btn {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    border: none;
+    background: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    transition: background 0.2s;
+    padding: 0;
+  }
+  .search-icon-btn:hover { background: rgba(255,255,255,0.18); }
+  .search-icon-btn svg {
+    width: 20px; height: 20px;
+    stroke: white; fill: none;
+    stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round;
+  }
+
+  /* Language — plain text + chevron, no border */
+  .lang-dropdown { position: relative; }
+  .lang-btn {
+    height: 36px;
+    padding: 0 8px;
+    border-radius: 4px;
+    border: none;
+    background: none;
+    cursor: pointer;
+    color: white;
+    font-size: 15px;
+    font-weight: 400;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    white-space: nowrap;
+    transition: background 0.2s;
+  }
+  .lang-btn:hover { background: rgba(255,255,255,0.18); }
+  .lang-btn svg { width: 14px; height: 14px; stroke: white; fill: none; stroke-width: 2.5; transition: transform 0.22s; }
+  .lang-dropdown.open .lang-btn svg { transform: rotate(180deg); }
+
+  /* myBühler link */
+  .mybuhler-link {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    color: white;
+    text-decoration: none;
+    font-size: 15px;
+    font-weight: 400;
+    padding: 0 8px;
+    height: 36px;
+    border-radius: 4px;
+    white-space: nowrap;
+    transition: background 0.2s, opacity 0.3s, max-width 0.38s cubic-bezier(0.4,0,0.2,1);
+    overflow: hidden;
+    max-width: 120px;
+  }
+  .mybuhler-link:hover { background: rgba(255,255,255,0.18); }
+  .mybuhler-link svg { width: 14px; height: 14px; stroke: white; fill: none; stroke-width: 2; flex-shrink: 0; }
+  .mybuhler-link.hidden { max-width: 0; opacity: 0; padding: 0; pointer-events: none; }
+
+  .lang-menu {
+    position: absolute;
+    top: calc(100% + 10px);
+    right: 0;
+    background: white;
+    border-radius: 10px;
+    box-shadow: 0 8px 28px rgba(0,0,0,0.15);
+    min-width: 170px;
+    overflow: hidden;
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(-6px);
+    transition: opacity 0.22s, visibility 0.22s, transform 0.22s;
+    z-index: 9999;
+  }
+  .lang-dropdown.open .lang-menu { opacity: 1; visibility: visible; transform: translateY(0); }
+  .lang-menu a { display: flex; align-items: center; gap: 10px; padding: 10px 16px; font-size: 14px; color: #333; text-decoration: none; transition: background 0.15s; }
+  .lang-menu a:hover { background: #f5f5f5; color: #003b5c; }
+  .lang-menu a.active { font-weight: 600; color: #00a6a6; }
+
+  /* HERO */
+  .hero {
+    height: 420px;
+    background: linear-gradient(to right, #004d66, #00a6a6, #8ccf2f);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 36px;
+    padding: 20px;
+  }
+  .hero h1 { color: white; font-size: 56px; text-align: center; font-weight: 700; }
+  .search-box {
+    width: 100%; max-width: 800px; background: white;
+    display: flex; align-items: center;
+    padding: 16px 24px; border-radius: 10px;
+    box-shadow: 0 5px 10px rgba(0,0,0,0.3);
+  }
+  .search-box input { width: 100%; border: none; outline: none; font-size: 22px; color: #333; }
+  .hero-search-icon { font-size: 26px; color: #00a6a6; flex-shrink: 0; margin-left: 12px; }
+
+  /* CARDS */
+  .cards-container {
+    display: flex; justify-content: center;
+    gap: 40px; margin-top: -60px;
+    padding: 0 40px 60px; flex-wrap: wrap;
+  }
+  .card {
+    width: 350px; background: white; border-radius: 20px; overflow: hidden;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.2); transition: 0.4s; cursor: pointer;
+  }
+  .card img { width: 100%; height: 220px; object-fit: cover; transition: 0.5s; display: block; }
+  .card:hover { transform: translateY(-10px) scale(1.03); box-shadow: 0 15px 25px rgba(0,0,0,0.3); }
+  .card:hover img { transform: scale(1.1); }
+  .card-content { padding: 25px; }
+  .card-content h2 { color: #003b5c; font-size: 24px; margin-bottom: 12px; }
+  .card-content p { color: #333; font-size: 16px; line-height: 1.6; }
+
+</style>
+</head>
+<body>
+
+<!-- NAVBAR -->
+<nav class="navbar">
+
+  <a href="#setting.html" class="navbar-logo" id="navLogo">
+    <img src="Logo.svg" alt="Bühler"
+      onerror="this.style.display='none'; this.parentElement.innerHTML='<span style=\'color:white;font-size:22px;font-weight:700;\'>&#x25C4; BÜHLER</span>'">
+  </a>
+
+  <ul class="nav-menu">
+
+    <li><a href="#">Solutions</a>
+      <div class="dropdown-panel"><div class="dropdown-inner">
+        <div class="dropdown-links-section">
+          <div class="dropdown-links-title">Food, feed &amp; confectionery</div>
+          <div class="dropdown-columns">
+            <div class="dropdown-col">
+              <a href="#">Alternative proteins &amp; food ingredients</a><a href="#">Animal feed</a>
+              <a href="#">Aqua feed</a><a href="#">Baked goods</a><a href="#">Biomass</a>
+              <a href="#">Biorefinery</a><a href="#">Breakfast cereals</a>
+              <a href="#">Cocoa &amp; chocolate</a><a href="#">Coffee</a><a href="#">Confectionery &amp; snacks</a>
+            </div>
+            <div class="dropdown-col">
+              <a href="#">Dairy</a><a href="#">Dried fruits &amp; vegetables</a>
+              <a href="#">Insect technology</a><a href="#">Nuts</a><a href="#">Oilseeds</a>
+              <a href="#">Pasta</a><a href="#">Pet food</a>
+              <a href="#">Pulses &amp; spices</a><a href="#">Rice &amp; paddy</a><a href="#">Wheat &amp; grain</a>
+            </div>
+          </div>
+        </div>
+        <div class="dropdown-divider"></div>
+        <div class="dropdown-links-section">
+          <div class="dropdown-links-title">Advanced materials</div>
+          <div class="dropdown-columns">
+            <div class="dropdown-col">
+              <a href="#" class="bold">Batteries</a><a href="#" class="bold">Grinding &amp; Dispersing</a>
+              <a href="#">Chemicals &amp; cosmetics</a><a href="#">Digital inks</a>
+              <a href="#">Electronic materials</a><a href="#">Paints &amp; coatings</a>
+              <a href="#">Printing inks</a><a href="#" class="bold">Die casting</a>
+            </div>
+            <div class="dropdown-col">
+              <a href="#" class="bold">Leybold Optics</a><a href="#">Glass coating</a>
+              <a href="#">Flexible electronics</a><a href="#">Flexible packaging</a>
+              <a href="#">Ophthalmic optics</a><a href="#">Precision optics</a>
+              <a href="#">Semiconductors</a><a href="#">Technology components</a>
+            </div>
+          </div>
+        </div>
+      </div></div>
+    </li>
+
+    <li><a href="#">Services</a>
+      <div class="dropdown-panel"><div class="dropdown-inner">
+        <div class="dropdown-links-section">
+          <div class="dropdown-columns">
+            <div class="dropdown-col">
+              <a href="#">Maintenance</a><a href="#">Expert services</a>
+              <a href="#">Hardware</a><a href="#">Installation services</a>
+            </div>
+            <div class="dropdown-col">
+              <a href="#">Knowledge services</a><a href="#">Process Optimization</a>
+              <a href="#">Upgrades</a><a href="#">24/7 Hotline</a>
+            </div>
+          </div>
+        </div>
+        <div class="dropdown-divider"></div>
+        <div class="dropdown-highlights">
+          <div class="dropdown-highlights-title">Highlights</div>
+          <div class="highlights-grid">
+            <a href="#" class="highlight-card"><img src="https://dam.buhlergroup.com/rendition/f29b71a573e94f949daafe3d0af0ea8c/-FJPG-TwebTeaser_4x3" alt=""/><div class="hl-text">Application &amp; Training Centers</div></a>
+            <a href="#" class="highlight-card"><img src="https://dam.buhlergroup.com/rendition/02dd51653bc447ca8f94d02e0eee2992/-FJPG-TwebTeaser_4x3" alt=""/><div class="hl-text">Services in general</div></a>
+            <a href="#" class="highlight-card"><img src="https://dam.buhlergroup.com/rendition/0a4591a2a4f240d9a63a65b27dc4af5e/-FJPG-TwebTeaser_4x3" alt=""/><div class="hl-text">Explore Digital Services</div></a>
+          </div>
+        </div>
+      </div></div>
+    </li>
+
+    <li><a href="#">Inspiration</a>
+      <div class="dropdown-panel"><div class="dropdown-inner">
+        <div class="dropdown-links-section">
+          <div class="dropdown-columns">
+            <div class="dropdown-col">
+              <a href="#">Climate protection</a><a href="#">Digitalization</a>
+              <a href="#">Food safety</a><a href="#">Generation B</a>
+            </div>
+            <div class="dropdown-col">
+              <a href="#">Mobility</a><a href="#">Nutrition</a>
+              <a href="#">Resource efficiency</a><a href="#">Sustainability</a>
+            </div>
+          </div>
+        </div>
+        <div class="dropdown-divider"></div>
+        <div class="dropdown-highlights">
+          <div class="dropdown-highlights-title">Highlights</div>
+          <div class="highlights-grid">
+            <a href="#" class="highlight-card"><img src="https://dam.buhlergroup.com/rendition/6c08b1e609a943d2965f158751b45d1d/-FJPG-TwebTeaser_4x3" alt=""/><div class="hl-text">What's your footprint?</div></a>
+            <a href="#" class="highlight-card"><img src="https://dam.buhlergroup.com/rendition/1608979/-FJPG-TwebTeaser_4x3" alt=""/><div class="hl-text">Lifelong Learning</div></a>
+            <a href="#" class="highlight-card"><img src="https://dam.buhlergroup.com/rendition/79e406b762384e08a5c9e59968119f85/-FJPG-TwebTeaser_4x3" alt=""/><div class="hl-text">Our sustainability goals</div></a>
+          </div>
+        </div>
+      </div></div>
+    </li>
+
+    <li><a href="#">News</a>
+      <div class="dropdown-panel"><div class="dropdown-inner">
+        <div class="dropdown-links-section">
+          <div class="dropdown-columns">
+            <div class="dropdown-col">
+              <a href="#">Annual Report 2025</a><a href="#">Events &amp; Webinars</a><a href="#">Inspiration Hub</a>
+            </div>
+            <div class="dropdown-col">
+              <a href="#">Media corner</a><a href="#">Publications</a>
+            </div>
+          </div>
+        </div>
+        <div class="dropdown-divider"></div>
+        <div class="dropdown-highlights">
+          <div class="dropdown-highlights-title">Highlights</div>
+          <div class="highlights-grid">
+            <a href="#" class="highlight-card"><img src="https://dam.buhlergroup.com/rendition/1690749/-FJPG-TwebTeaser_4x3" alt=""/><div class="hl-text">Bühler Networking Days 2025</div></a>
+            <a href="#" class="highlight-card"><img src="https://dam.buhlergroup.com/rendition/1775932/-FJPG-TwebTeaser_4x3" alt=""/><div class="hl-text">Visit our 2025 Annual Report page</div></a>
+            <a href="#" class="highlight-card"><img src="https://dam.buhlergroup.com/rendition/1723767/-FJPG-TwebTeaser_4x3" alt=""/><div class="hl-text">Diagram 191: Download the latest issue</div></a>
+          </div>
+        </div>
+      </div></div>
+    </li>
+
+    <li><a href="#">Careers</a>
+      <div class="dropdown-panel"><div class="dropdown-inner">
+        <div class="dropdown-links-section">
+          <div class="dropdown-columns">
+            <div class="dropdown-col">
+              <a href="#" class="bold">Purpose &amp; Community</a><a href="#">About Bühler</a>
+              <a href="#">Our values</a><a href="#">Benefits</a><a href="#">Lifelong learning</a>
+            </div>
+            <div class="dropdown-col">
+              <a href="#">Diversity, equity &amp; inclusion</a><a href="#">Application process</a>
+              <a href="#">Apprenticeship</a><a href="#">Early careers</a><a href="#">People stories</a>
+            </div>
+          </div>
+        </div>
+        <div class="dropdown-divider"></div>
+        <div class="dropdown-highlights">
+          <div class="dropdown-highlights-title">Highlights</div>
+          <div class="highlights-grid">
+            <a href="#" class="highlight-card"><img src="https://dam.buhlergroup.com/rendition/1637048/-FJPG-TwebTeaser_4x3" alt="visible image"/><div class="hl-text">See all jobs</div></a>
+            <a href="#" class="highlight-card"><img src="https://dam.buhlergroup.com/rendition/1624517/-FJPG-TwebTeaser_4x3" alt="visible image"/><div class="hl-text">Locations</div></a>
+            <a href="#" class="highlight-card"><img src="https://dam.buhlergroup.com/rendition/1622557/-FJPG-TwebTeaser_4x3" alt="visible image"/><div class="hl-text">Career Paths</div></a>
+          </div>
+        </div>
+      </div></div>
+    </li>
+
+    <li><a href="#">About us</a>
+      <div class="dropdown-panel"><div class="dropdown-inner">
+        <div class="dropdown-links-section">
+          <div class="dropdown-columns">
+            <div class="dropdown-col">
+              <a href="#">About us</a><a href="#">Ad hoc announcements</a>
+              <a href="#">Channel partners</a><a href="#">Contact us</a><a href="#">Corporate Governance</a>
+            </div>
+            <div class="dropdown-col">
+              <a href="#">Corporate policies</a><a href="#">Our organization</a>
+              <a href="#">Startup collaborations</a><a href="#">Supplying to Bühler</a>
+            </div>
+          </div>
+        </div>
+        <div class="dropdown-divider"></div>
+        <div class="dropdown-highlights">
+          <div class="dropdown-highlights-title">Highlights</div>
+          <div class="highlights-grid">
+            <a href="#" class="highlight-card"><img src="https://dam.buhlergroup.com/rendition/8bde69e2749d4d88a55ecefdae9044db/-FJPG-TwebTeaser_4x3" alt="this is an image "/><div class="hl-text">Our locations</div></a>
+            <a href="#" class="highlight-card"><img src="https://dam.buhlergroup.com/rendition/78de131472144bb3a8bf49e1af042648/-FJPG-TwebTeaser_4x3" alt="this is an iamge "/><div class="hl-text">Media corner</div></a>
+            <a href="#" class="highlight-card"><img src="https://dam.buhlergroup.com/rendition/071e1f5c158e4264ac3e913c0a921833/-FJPG-TwebTeaser_4x3" alt="this is an image"/><div class="hl-text">Contact us</div></a>
+          </div>
+        </div>
+      </div></div>
+    </li>
+
+  </ul>
+
+  <!-- RIGHT SIDE NAV -->
+  <div class="nav-right">
+
+    <!-- Search: expanding input + circle icon button -->
+    <div class="search-wrap">
+      <div class="search-expand" id="searchExpand">
+        <input type="text" id="searchInput" placeholder="Search...">
+      </div>
+      <button class="search-icon-btn" id="searchBtn" aria-label="Toggle search">
+        <svg id="svgMag" viewBox="0 0 24 24">
+          <circle cx="11" cy="11" r="7"/>
+          <line x1="21" y1="21" x2="16.65" y2="16.65"/>
+        </svg>
+        <svg id="svgX" viewBox="0 0 24 24" style="display:none;">
+          <line x1="18" y1="6" x2="6" y2="18"/>
+          <line x1="6" y1="6" x2="18" y2="18"/>
+        </svg>
+      </button>
+    </div>
+
+    <!-- Language pill -->
+    <div class="lang-dropdown" id="langDropdown">
+      <button class="lang-btn" id="langBtn" aria-haspopup="true" aria-expanded="false">
+        <span id="langLabel">EN</span>
+        <svg viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg>
+      </button>
+      <div class="lang-menu" id="langMenu" role="menu">
+        <a href="#" class="active" data-lang="EN">🇬🇧 English</a>
+        <a href="#" data-lang="DE">🇩🇪 Deutsch</a>
+        <a href="#" data-lang="FR">🇫🇷 Français</a>
+        <a href="#" data-lang="ZH">🇨🇳 中文</a>
+        <a href="#" data-lang="JA">🇯🇵 日本語</a>
+        <a href="#" data-lang="ES">🇪🇸 Español</a>
+        <a href="#" data-lang="PT">🇧🇷 Português</a>
+        <a href="#" data-lang="RU">🇷🇺 Русский</a>
+      </div>
+    </div>
+
+  </div>
+
+</nav>
+
+<!-- HERO -->
+<div class="hero">
+  <h1>Innovations for a better world</h1>
+  <div class="search-box">
+    <input type="text" placeholder="I am interested in...">
+    <span class="hero-search-icon">🔍</span>
+  </div>
+</div>
+
+<!-- CARDS -->
+<div class="cards-container">
+
+  <div class="card">
+    <img src="image1.jpeg" alt="Chocolate Processing">
+    <div class="card-content">
+      <p>Bühler presents new editions of two icons in chocolate mass processing.</p>
+    </div>
+  </div>
+
+  <div class="card">
+    <img src="image2.jpeg" alt="Food Innovation">
+    <div class="card-content">
+      <p>Bühler launches innovations and major upgrades to grains and food systems.</p>
+    </div>
+  </div>
+
+  <div class="card">
+    <img src="image3.jpeg" alt="Extrusion Systems">
+    <div class="card-content">
+      <p>Bühler ushers in a new era of extrusion systems with Nutrex 7 Series.</p>
+    </div>
+  </div>
+<div class="card">
+    <img src="image4.jpeg" alt="Extrusion Systems">
+    <div class="card-content">
+      <p>Bühler strengthens its market position.</p>
+    </div>
+  </div>
+  <div class="card">
+    <img src="image5.jpeg" alt="Extrusion Systems">
+    <div class="card-content">
+      <p>Samuel Schär is the new CEO of Bühler Group</p>
+    </div>
+  </div>
+  <div class="card">
+    <img src="image6.jpeg" alt="Extrusion Systems">
+    <div class="card-content">
+      <p>Pow.Bio and Bühler join forces to advance next-generation precision fermentation</p>
+    </div>
+  </div>
+</div>
+
+<script>
+  /* ---- SEARCH ---- */
+  const searchBtn    = document.getElementById('searchBtn');
+  const searchExpand = document.getElementById('searchExpand');
+  const searchInput  = document.getElementById('searchInput');
+  const navLogo      = document.getElementById('navLogo');
+  const svgMag       = document.getElementById('svgMag');
+  const svgX         = document.getElementById('svgX');
+  let searchOpen = false;
+
+  searchBtn.addEventListener('click', (e) => {
+    e.stopPropagation();
+    searchOpen = !searchOpen;
+    if (searchOpen) {
+      searchExpand.classList.add('open');
+      navLogo.classList.add('hidden');
+      svgMag.style.display = 'none';
+      svgX.style.display = 'block';
+      setTimeout(() => searchInput.focus(), 360);
+    } else {
+      closeSearch();
+    }
+  });
+
+  function closeSearch() {
+    searchOpen = false;
+    searchExpand.classList.remove('open');
+    navLogo.classList.remove('hidden');
+    svgMag.style.display = 'block';
+    svgX.style.display = 'none';
+    searchInput.value = '';
+  }
+
+  document.addEventListener('click', (e) => {
+    if (searchOpen && !searchBtn.contains(e.target) && !searchExpand.contains(e.target)) {
+      closeSearch();
+    }
+  });
+
+  searchInput.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeSearch(); });
+
+  /* ---- LANGUAGE ---- */
+  const langDropdown = document.getElementById('langDropdown');
+  const langBtn      = document.getElementById('langBtn');
+  const langMenu     = document.getElementById('langMenu');
+  const langLabel    = document.getElementById('langLabel');
+
+  langBtn.addEventListener('click', (e) => {
+    e.stopPropagation();
+    const isOpen = langDropdown.classList.toggle('open');
+    langBtn.setAttribute('aria-expanded', isOpen);
+  });
+
+  langMenu.querySelectorAll('a').forEach(link => {
+    link.addEventListener('click', (e) => {
+      e.preventDefault();
+      langMenu.querySelectorAll('a').forEach(a => a.classList.remove('active'));
+      link.classList.add('active');
+      langLabel.textContent = link.dataset.lang;
+      langDropdown.classList.remove('open');
+      langBtn.setAttribute('aria-expanded', false);
+    });
+  });
+
+  document.addEventListener('click', () => {
+    langDropdown.classList.remove('open');
+    langBtn.setAttribute('aria-expanded', false);
+  });
+</script>
+</body>
+</html>
+
+
+

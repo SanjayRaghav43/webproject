@@ -1,0 +1,1762 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interactive 3D DNS Resolution Simulation</title>
+     <!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-J0978NE8KX"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-J0978NE8KX');
+</script>
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7901798636854618" crossorigin="anonymous"></script>
+    <meta name="description" content="Learn real-time theory complex concepts that come to life in 3D. Druvexaa visualizes the invisible things with interactive simulations, projects, and clear explanations.">
+    <link rel="canonical" href="https://druvexaa.com/">
+    <meta name="robots" content="index, follow">
+    <script>
+        (() => {
+            if (localStorage.getItem('theme') === 'light') document.documentElement.classList.remove('dark');
+            else document.documentElement.classList.add('dark');
+            const block = (e) => { e.preventDefault(); };
+            document.addEventListener('contextmenu', block, { capture: true });
+            document.addEventListener('keydown', function (e) {
+                if (e.key === 'F12' || (e.ctrlKey && e.shiftKey && ['I','J','C'].includes(e.key.toUpperCase())) || (e.ctrlKey && e.key.toUpperCase() === 'U')) block(e);
+            }, { capture: true });
+        })();
+    </script>
+     <!-- ANTI-INSPECTION SCRIPT & THEME LOADER -->
+    <script>
+        (() => {
+            // Apply theme from localStorage immediately to prevent color flashing
+            if (localStorage.getItem('theme') === 'light') {
+                document.documentElement.classList.remove('dark');
+            } else {
+                document.documentElement.classList.add('dark');
+            }
+            
+            // Anti-inspection logic
+            const blockAndTrigger = (e) => {
+                e.preventDefault();
+                if (typeof triggerBlocker === 'function') {
+                    triggerBlocker();
+                }
+            };
+            document.addEventListener('contextmenu', blockAndTrigger, { capture: true });
+            document.addEventListener('keydown', function (e) {
+                if (e.key === 'F12' || (e.ctrlKey && e.shiftKey && ['I', 'J', 'C'].includes(e.key.toUpperCase())) || (e.ctrlKey && e.key.toUpperCase() === 'U')) {
+                    blockAndTrigger(e);
+                }
+            }, { capture: true });
+        })();
+    </script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.9.1/gsap.min.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg: #080c16;
+            --panel: rgba(12, 18, 35, 0.88);
+            --border: rgba(45, 212, 191, 0.12);
+            --accent: #2dd4bf;
+            --text: #e2e8f0;
+            --muted: #64748b;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            overflow: hidden;
+            font-family: 'Outfit', sans-serif;
+            background: var(--bg);
+            color: var(--text);
+        }
+        #dns-canvas {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            outline: none;
+        }
+
+        /* Scrollbar */
+        .csc::-webkit-scrollbar { width: 5px; }
+        .csc::-webkit-scrollbar-track { background: transparent; }
+        .csc::-webkit-scrollbar-thumb { background: #1e293b; border-radius: 10px; }
+
+        /* Glass panel */
+        .glass {
+            background: var(--panel);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            box-shadow: 0 8px 40px rgba(0,0,0,0.5);
+        }
+
+        /* Buttons */
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            padding: 10px 16px;
+            border-radius: 10px;
+            font-weight: 600;
+            font-size: 13px;
+            font-family: 'Outfit', sans-serif;
+            transition: all 0.2s;
+            border: 1px solid transparent;
+            cursor: pointer;
+            white-space: nowrap;
+            color: #fff;
+        }
+        .btn:disabled { opacity: 0.3; cursor: not-allowed; }
+        .btn svg { width: 16px; height: 16px; flex-shrink: 0; }
+        .btn-pri { background: #0891b2; border-color: rgba(45,212,191,0.2); }
+        .btn-pri:hover:not(:disabled) { background: #06b6d4; }
+        .btn-sec { background: rgba(30,41,59,0.7); color: #94a3b8; border-color: rgba(71,85,105,0.3); }
+        .btn-sec:hover:not(:disabled) { background: rgba(51,65,85,0.7); color: #e2e8f0; }
+        .btn-acc { background: rgba(99,102,241,0.6); border-color: rgba(129,140,248,0.2); }
+        .btn-acc:hover:not(:disabled) { background: rgba(99,102,241,0.8); }
+        .btn-voice-on {
+            background: rgba(45,212,191,0.25) !important;
+            color: var(--accent) !important;
+            border-color: rgba(45,212,191,0.35) !important;
+        }
+        .btn-auto-on {
+            background: rgba(251,191,36,0.2) !important;
+            color: #fbbf24 !important;
+            border-color: rgba(251,191,36,0.3) !important;
+        }
+
+        /* Guide Arrow */
+        .guide-arrow {
+            position: fixed;
+            z-index: 180;
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 0.4s;
+        }
+        .guide-arrow.visible {
+            opacity: 1;
+            pointer-events: auto;
+        }
+        .guide-arrow-inner {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+        }
+        .guide-arrow-label {
+            background: rgba(12, 18, 35, 0.96);
+            border: 1px solid rgba(45, 212, 191, 0.45);
+            border-radius: 12px;
+            padding: 10px 16px;
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--text);
+            box-shadow: 0 10px 35px rgba(0,0,0,0.55);
+            text-align: center;
+            line-height: 1.5;
+            max-width: 240px;
+        }
+        .guide-arrow-label b { color: var(--accent); }
+        .guide-arrow-label .ga-x {
+            display: inline-block;
+            margin-left: 8px;
+            color: #475569;
+            cursor: pointer;
+            font-size: 13px;
+        }
+        .guide-arrow-label .ga-x:hover { color: #f87171; }
+        .guide-arrow-chevron {
+            width: 28px; height: 28px; flex-shrink: 0;
+        }
+        .guide-arrow-chevron svg {
+            width: 100%; height: 100%;
+            filter: drop-shadow(0 0 8px rgba(45,212,191,0.5));
+        }
+        .guide-arrow.point-down .guide-arrow-chevron {
+            animation: bounceDown 1s ease-in-out infinite;
+        }
+        @keyframes bounceDown {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(10px); }
+        }
+        .guide-arrow.point-up .guide-arrow-inner {
+            flex-direction: column-reverse;
+        }
+        .guide-arrow.point-up .guide-arrow-chevron {
+            animation: bounceUp 1s ease-in-out infinite;
+        }
+        @keyframes bounceUp {
+            0%, 100% { transform: translateY(0) rotate(180deg); }
+            50% { transform: translateY(-10px) rotate(180deg); }
+        }
+        .glow-ring {
+            box-shadow: 0 0 0 3px rgba(45,212,191,0.5), 0 0 20px rgba(45,212,191,0.3) !important;
+            animation: glowPulse 1.5s ease-in-out infinite !important;
+        }
+        @keyframes glowPulse {
+            0%, 100% { box-shadow: 0 0 0 3px rgba(45,212,191,0.5), 0 0 20px rgba(45,212,191,0.3); }
+            50% { box-shadow: 0 0 0 5px rgba(45,212,191,0.7), 0 0 30px rgba(45,212,191,0.45); }
+        }
+
+        /* Tour tooltip - NO dark overlay */
+        .tour-tooltip {
+            position: fixed;
+            z-index: 250;
+            background: rgba(8, 12, 22, 0.97);
+            border: 1.5px solid rgba(45, 212, 191, 0.45);
+            border-radius: 14px;
+            padding: 18px 22px;
+            max-width: 340px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.65);
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            opacity: 0;
+            pointer-events: none;
+        }
+        .tour-tooltip.active {
+            opacity: 1;
+            pointer-events: auto;
+        }
+        .tour-arrow-up {
+            position: absolute;
+            width: 0; height: 0;
+            border-left: 10px solid transparent;
+            border-right: 10px solid transparent;
+            border-bottom: 12px solid rgba(45,212,191,0.4);
+            top: -12px; left: 30px;
+        }
+        .tour-arrow-down {
+            position: absolute;
+            width: 0; height: 0;
+            border-left: 10px solid transparent;
+            border-right: 10px solid transparent;
+            border-top: 12px solid rgba(45,212,191,0.4);
+            bottom: -12px; left: 30px;
+        }
+
+        /* Mode selector */
+        .mode-card {
+            position: relative;
+            padding: 28px 24px;
+            border-radius: 16px;
+            cursor: pointer;
+            border: 2px solid rgba(71,85,105,0.3);
+            transition: all 0.3s;
+            background: rgba(15,23,42,0.6);
+        }
+        .mode-card:hover {
+            border-color: rgba(45,212,191,0.5);
+            transform: translateY(-3px);
+            box-shadow: 0 12px 40px rgba(0,0,0,0.4);
+        }
+        .mode-card.recommended { border-color: rgba(45,212,191,0.4); }
+        .mode-card .badge {
+            position: absolute; top: -10px; right: 16px;
+            background: var(--accent); color: #042f2e;
+            font-size: 10px; font-weight: 700;
+            padding: 3px 10px; border-radius: 20px;
+            letter-spacing: 0.5px;
+        }
+
+        @keyframes pulseGlow {
+            0%, 100% { box-shadow: 0 0 8px rgba(45,212,191,0.3); }
+            50% { box-shadow: 0 0 22px rgba(45,212,191,0.6); }
+        }
+        .pulse-glow { animation: pulseGlow 2s infinite; }
+
+        /* Terminal */
+        .terminal-log {
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 11px; line-height: 1.6;
+            color: #64748b;
+            background: rgba(0,0,0,0.35);
+            border-radius: 8px;
+            padding: 10px 12px;
+            max-height: 95px;
+            overflow-y: auto;
+        }
+        .log-query { color: #fbbf24; }
+        .log-response { color: #34d399; }
+        .log-info { color: #60a5fa; }
+        .log-error { color: #f87171; }
+
+        /* Status badge */
+        .status-badge {
+            display: inline-flex; align-items: center; gap: 6px;
+            padding: 4px 12px; border-radius: 20px;
+            font-size: 10px; font-weight: 700;
+            text-transform: uppercase; letter-spacing: 0.5px;
+        }
+        .status-searching { background: rgba(251,191,36,0.12); color: #fbbf24; border: 1px solid rgba(251,191,36,0.2); }
+        .status-found { background: rgba(52,211,153,0.12); color: #34d399; border: 1px solid rgba(52,211,153,0.2); }
+        .status-idle { background: rgba(100,116,139,0.15); color: #94a3b8; border: 1px solid rgba(100,116,139,0.2); }
+
+        /* Comparison table */
+        .cmp-table { width: 100%; border-collapse: collapse; font-size: 12px; }
+        .cmp-table th {
+            text-align: left; padding: 6px 8px; color: var(--accent);
+            font-weight: 600; border-bottom: 1px solid rgba(45,212,191,0.15);
+            font-size: 11px; text-transform: uppercase; letter-spacing: 0.5px;
+        }
+        .cmp-table td { padding: 6px 8px; border-bottom: 1px solid rgba(30,41,59,0.5); color: #94a3b8; }
+        .cmp-table tr.active td { color: var(--accent); font-weight: 600; background: rgba(45,212,191,0.06); }
+
+        #website-overlay, #about-overlay { z-index: 100; }
+    </style>
+</head>
+<body>
+    <canvas id="dns-canvas"></canvas>
+
+    <!-- ========== DISCLAIMER ========== -->
+    <div id="disclaimer-overlay" class="fixed inset-0 bg-black/92 backdrop-blur-sm flex justify-center items-center p-4 z-50">
+        <div id="disclaimer-box" class="w-full max-w-lg glass text-center p-8 transform scale-95 opacity-0">
+            <div class="text-teal-400 mb-5">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-14 w-14 mx-auto" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9"/>
+                </svg>
+            </div>
+            <h2 class="text-2xl font-extrabold text-white mb-2">DNS Resolution Simulator</h2>
+            <p class="text-slate-400 text-sm mb-5">An educational 3D visualization of how domain names resolve to IP addresses.</p>
+            <div class="bg-amber-500/10 p-3 rounded-lg mb-6 ring-1 ring-amber-500/25">
+                <p class="font-semibold text-amber-300 text-xs">Best experienced on desktop/laptop with a modern browser.</p>
+            </div>
+            <button id="enter-btn" class="btn btn-pri px-8 py-3 text-base pulse-glow">Enter Simulation</button>
+        </div>
+    </div>
+
+    <!-- ========== MODE SELECTOR ========== -->
+    <div id="mode-overlay" class="hidden fixed inset-0 bg-black/88 backdrop-blur-sm flex justify-center items-center p-4 z-50">
+        <div id="mode-box" class="w-full max-w-2xl glass p-8 opacity-0 transform scale-95">
+            <h2 class="text-2xl font-extrabold text-white text-center mb-2">Choose Your Learning Mode</h2>
+            <p class="text-slate-400 text-sm text-center mb-8">We recommend starting with Basic first. Once you understand the concept, try Advanced.</p>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+                <div class="mode-card recommended">
+                    <div class="badge">&#9733; START HERE</div>
+                    <div class="text-3xl mb-3">&#128241;</div>
+                    <h3 class="text-lg font-bold text-white mb-2">Basic Mode</h3>
+                    <p class="text-slate-400 text-xs leading-relaxed mb-4">DNS explained like a <b class="text-teal-300">phone book</b>. Simple real-life analogy with clear 3D animations.</p>
+                    <button id="mode-basic-btn" class="btn btn-pri w-full pulse-glow">Start Basic Mode</button>
+                </div>
+                <div class="mode-card">
+                    <div class="text-3xl mb-3">&#128421;</div>
+                    <h3 class="text-lg font-bold text-white mb-2">Advanced Mode</h3>
+                    <p class="text-slate-400 text-xs leading-relaxed mb-4">Full DNS chain with <b class="text-sky-300">server racks</b>, root/TLD/authoritative servers.</p>
+                    <button id="mode-adv-btn" class="btn btn-sec w-full">Start Advanced Mode</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ========== GUIDE ARROWS ========== -->
+    <div id="ga-tour" class="guide-arrow point-down">
+        <div class="guide-arrow-inner">
+            <div class="guide-arrow-label">
+                &#128075; <b>Press here</b> to start the tour<br>and learn how to use this
+                <span class="ga-x" data-ga="ga-tour">&#10005;</span>
+            </div>
+            <div class="guide-arrow-chevron">
+                <svg viewBox="0 0 24 24" fill="none" stroke="#2dd4bf" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M19 12l-7 7-7-7"/></svg>
+            </div>
+        </div>
+    </div>
+    <div id="ga-next" class="guide-arrow point-up">
+        <div class="guide-arrow-inner">
+            <div class="guide-arrow-label">
+                &#9757; <b>Press Next</b> to go step by step<br>and see what happens
+                <span class="ga-x" data-ga="ga-next">&#10005;</span>
+            </div>
+            <div class="guide-arrow-chevron">
+                <svg viewBox="0 0 24 24" fill="none" stroke="#2dd4bf" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M19 12l-7 7-7-7"/></svg>
+            </div>
+        </div>
+    </div>
+    <div id="ga-autoplay" class="guide-arrow point-up">
+        <div class="guide-arrow-inner">
+            <div class="guide-arrow-label">
+                &#9654; Or <b>press Auto-Play</b><br>to watch automatically
+                <span class="ga-x" data-ga="ga-autoplay">&#10005;</span>
+            </div>
+            <div class="guide-arrow-chevron">
+                <svg viewBox="0 0 24 24" fill="none" stroke="#fbbf24" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M19 12l-7 7-7-7"/></svg>
+            </div>
+        </div>
+    </div>
+
+    <!-- ========== TOUR TOOLTIP (NO dark overlay!) ========== -->
+    <div id="tour-tooltip" class="tour-tooltip">
+        <div class="tour-arrow-up" id="tour-arrow"></div>
+        <p id="tour-text" class="text-sm text-slate-200 leading-relaxed mb-3"></p>
+        <div class="flex items-center justify-between">
+            <div id="tour-dots" class="flex gap-1.5"></div>
+            <div class="flex gap-2">
+                <button id="tour-skip-btn" class="btn btn-sec text-xs py-1.5 px-3">Skip All</button>
+                <button id="tour-next-btn" class="btn btn-pri text-xs py-1.5 px-3">Next &#8594;</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ========== TOP PANEL ========== -->
+    <div class="fixed top-0 left-0 p-3 md:p-4 w-full max-w-md lg:max-w-lg z-10">
+        <div class="glass p-5">
+            <div class="flex justify-between items-start gap-2 mb-1">
+                <div>
+                    <h1 class="text-lg md:text-xl font-extrabold text-teal-400 leading-tight">DNS Resolution</h1>
+                    <p class="text-[10px] text-slate-600 tracking-wider" style="font-family:'IBM Plex Mono',monospace">
+                        <span id="mode-label">BASIC MODE</span> &middot; 3D SIMULATION
+                    </p>
+                </div>
+                <div class="flex gap-2 flex-shrink-0">
+                    <button id="switch-btn" class="btn btn-sec text-xs py-1.5 px-3" title="Switch Mode">
+                        <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4"/></svg>
+                        <span id="switch-label">Advanced &#8594;</span>
+                    </button>
+                    <button id="tour-btn" class="btn btn-sec text-xs py-1.5 px-3" title="Tour">
+                        <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                        <span>Tour</span>
+                    </button>
+                </div>
+            </div>
+            <!-- Search (advanced) -->
+            <div id="search-container" class="hidden mt-4">
+                <p class="text-xs text-slate-500 mb-3">Enter a domain to begin the DNS lookup journey.</p>
+                <div class="flex gap-2">
+                    <input type="text" id="domain-input" placeholder="e.g., www.google.com" class="flex-1 bg-slate-800/50 text-white border border-slate-700/50 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-teal-500/40 placeholder:text-slate-600" style="font-family:'IBM Plex Mono',monospace">
+                    <button id="search-btn" class="btn btn-pri px-5">Resolve</button>
+                </div>
+            </div>
+            <!-- Basic intro -->
+            <div id="basic-intro" class="mt-4">
+                <p class="text-xs text-slate-400 leading-relaxed">DNS is like a <b class="text-teal-300">phone book</b> for the internet. Press <b class="text-teal-300">Tour</b> to learn the controls, or <b class="text-teal-300">Next</b> below to start.</p>
+            </div>
+            <!-- Simulation display -->
+            <div id="sim-container" class="hidden mt-4">
+                <div class="flex items-center justify-between mb-3">
+                    <div class="flex items-center gap-3">
+                        <span class="text-xs text-slate-500" style="font-family:'IBM Plex Mono',monospace">STEP <span id="step-current" class="text-teal-400 font-bold text-sm">1</span> / <span id="step-total">7</span></span>
+                        <div id="status-badge" class="status-badge status-idle">
+                            <span class="w-1.5 h-1.5 rounded-full bg-current"></span>
+                            <span id="status-text">Idle</span>
+                        </div>
+                    </div>
+                </div>
+                <div id="description" class="csc text-slate-300 text-sm leading-relaxed h-32 overflow-y-auto pr-2 mb-3"></div>
+                <div id="comparison-panel" class="hidden">
+                    <table class="cmp-table">
+                        <tr><th>&#128241; Phone World</th><th>&#127760; Internet World</th></tr>
+                        <tr id="cmp-1"><td>Contact Name (Rahul)</td><td>Domain Name (google.com)</td></tr>
+                        <tr id="cmp-2"><td>Phone Number (98765...)</td><td>IP Address (142.250...)</td></tr>
+                        <tr id="cmp-3"><td>Phone Book / Contacts App</td><td>DNS Server</td></tr>
+                        <tr id="cmp-4"><td>You (the caller)</td><td>Browser / User</td></tr>
+                        <tr id="cmp-5"><td>Mobile Network</td><td>Internet</td></tr>
+                    </table>
+                </div>
+                <div id="terminal" class="terminal-log csc hidden"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ========== BOTTOM CONTROLS ========== -->
+    <div id="bottom-controls" class="fixed bottom-0 left-1/2 -translate-x-1/2 w-full max-w-3xl p-3 z-10">
+        <div class="glass p-2.5 flex items-center justify-center gap-2 flex-wrap">
+            <button id="prev-btn" class="btn btn-sec" disabled>
+                <svg fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg>
+                <span>Prev</span>
+            </button>
+            <button id="next-btn" class="btn btn-sec" disabled>
+                <span>Next</span>
+                <svg fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+            </button>
+            <button id="autoplay-btn" class="btn btn-pri" disabled>
+                <svg fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"/></svg>
+                <span>Auto-Play</span>
+            </button>
+            <button id="voice-btn" class="btn btn-sec" disabled>
+                <svg fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.536 8.464a5 5 0 010 7.072M17.95 6.05a8 8 0 010 11.9M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z"/></svg>
+                <span>Voice</span>
+            </button>
+            <button id="about-btn" class="btn btn-sec">
+                <svg fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/></svg>
+                <span>About</span>
+            </button>
+            <button id="restart-btn" class="btn btn-acc" disabled>
+                <svg fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h5M20 20v-5h-5M4 4l5 5M20 20l-5-5"/></svg>
+                <span>Restart</span>
+            </button>
+        </div>
+    </div>
+
+    <!-- ========== WEBSITE OVERLAY ========== -->
+    <div id="website-overlay" class="hidden fixed inset-0 bg-black/80 flex justify-center items-center p-4">
+        <div class="w-full max-w-3xl glass flex flex-col overflow-hidden" style="max-height:80vh">
+            <div class="bg-slate-800/80 p-2.5 flex items-center gap-2 border-b border-slate-700/50">
+                <div class="w-3 h-3 bg-red-500 rounded-full"></div>
+                <div class="w-3 h-3 bg-yellow-500 rounded-full"></div>
+                <div class="w-3 h-3 bg-green-500 rounded-full"></div>
+                <div id="address-bar" class="ml-3 flex-grow bg-slate-900/50 text-slate-400 text-xs rounded-full px-4 py-1.5" style="font-family:'IBM Plex Mono',monospace"></div>
+            </div>
+            <div class="flex-grow p-10 flex flex-col justify-center items-center text-center">
+                <div id="website-content"></div>
+                <div class="mt-8 flex gap-3">
+                    <button id="close-web-btn" class="btn btn-sec px-6">Close</button>
+                    <button id="reset-web-btn" class="btn btn-acc px-6">New Simulation</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ========== ABOUT OVERLAY ========== -->
+    <div id="about-overlay" class="hidden fixed inset-0 bg-black/80 flex justify-center items-center p-4">
+        <div class="w-full max-w-2xl glass flex flex-col p-6" style="max-height:85vh">
+            <div class="flex justify-between items-center mb-5">
+                <h2 class="text-xl font-bold text-teal-400">The Domain Name System</h2>
+                <button id="close-about-btn" class="btn btn-sec p-2">
+                    <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+                </button>
+            </div>
+            <div class="csc flex-grow overflow-y-auto pr-3 text-slate-300 text-sm leading-relaxed space-y-5">
+                <div>
+                    <h3 class="font-semibold text-teal-400 mb-2">Simple Version</h3>
+                    <p>DNS is the internet's phone book. You type a name (google.com), DNS finds the number (142.250.183.14). Just like your contacts app converts "Rahul" into his phone number.</p>
+                </div>
+                <div>
+                    <h3 class="font-semibold text-teal-400 mb-2">Full Lookup Chain</h3>
+                    <div class="space-y-2 text-xs mt-2">
+                        <div class="flex gap-3 items-start p-2.5 bg-slate-800/40 rounded-lg"><span class="text-teal-400 font-bold w-5 flex-shrink-0">1.</span><span><strong class="text-white">Browser & OS:</strong> Check hosts file and local DNS cache first.</span></div>
+                        <div class="flex gap-3 items-start p-2.5 bg-slate-800/40 rounded-lg"><span class="text-teal-400 font-bold w-5 flex-shrink-0">2.</span><span><strong class="text-white">Recursive Resolver:</strong> ISP's server does the heavy lifting.</span></div>
+                        <div class="flex gap-3 items-start p-2.5 bg-slate-800/40 rounded-lg"><span class="text-teal-400 font-bold w-5 flex-shrink-0">3.</span><span><strong class="text-white">Root Server:</strong> Points to the right TLD server.</span></div>
+                        <div class="flex gap-3 items-start p-2.5 bg-slate-800/40 rounded-lg"><span class="text-teal-400 font-bold w-5 flex-shrink-0">4.</span><span><strong class="text-white">TLD Server:</strong> Points to the authoritative server.</span></div>
+                        <div class="flex gap-3 items-start p-2.5 bg-slate-800/40 rounded-lg"><span class="text-teal-400 font-bold w-5 flex-shrink-0">5.</span><span><strong class="text-white">Authoritative NS:</strong> Returns the final IP + TTL.</span></div>
+                        <div class="flex gap-3 items-start p-2.5 bg-slate-800/40 rounded-lg"><span class="text-teal-400 font-bold w-5 flex-shrink-0">6.</span><span><strong class="text-white">Caching:</strong> Stored at every level for speed.</span></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script type="module">
+        // ============================================================
+        //  THREE.JS SCENE SETUP
+        // ============================================================
+        const scene = new THREE.Scene();
+        scene.fog = new THREE.FogExp2(0x080c16, 0.011);
+
+        const camera = new THREE.PerspectiveCamera(65, window.innerWidth / window.innerHeight, 0.1, 1000);
+        camera.position.set(0, 8, 28);
+
+        const renderer = new THREE.WebGLRenderer({
+            canvas: document.querySelector('#dns-canvas'),
+            antialias: true,
+            alpha: true
+        });
+        renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        renderer.toneMapping = THREE.ACESFilmicToneMapping;
+        renderer.toneMappingExposure = 1.2;
+
+        // Lighting
+        scene.add(new THREE.AmbientLight(0x446688, 0.45));
+        const dirLight = new THREE.DirectionalLight(0xffffff, 0.8);
+        dirLight.position.set(8, 15, 10);
+        scene.add(dirLight);
+        const fillLight = new THREE.DirectionalLight(0x2dd4bf, 0.25);
+        fillLight.position.set(-8, 5, -5);
+        scene.add(fillLight);
+        const groundLight = new THREE.PointLight(0x2dd4bf, 0.35, 50);
+        groundLight.position.set(0, -3, 0);
+        scene.add(groundLight);
+
+        // Controls
+        const controls = new THREE.OrbitControls(camera, renderer.domElement);
+        controls.enableDamping = true;
+        controls.dampingFactor = 0.08;
+        controls.screenSpacePanning = false;
+        controls.minDistance = 5;
+        controls.maxDistance = 55;
+        controls.maxPolarAngle = Math.PI / 2.1;
+
+        // Grid floor
+        const gridHelper = new THREE.GridHelper(60, 40, 0x162033, 0x0f1726);
+        gridHelper.position.y = -2.5;
+        scene.add(gridHelper);
+
+        // Background particles
+        const particleCount = 250;
+        const particleGeo = new THREE.BufferGeometry();
+        const particlePositions = new Float32Array(particleCount * 3);
+        for (let i = 0; i < particleCount; i++) {
+            particlePositions[i * 3] = (Math.random() - 0.5) * 60;
+            particlePositions[i * 3 + 1] = (Math.random() - 0.5) * 30;
+            particlePositions[i * 3 + 2] = (Math.random() - 0.5) * 60;
+        }
+        particleGeo.setAttribute('position', new THREE.BufferAttribute(particlePositions, 3));
+        const particleMat = new THREE.PointsMaterial({ color: 0x2dd4bf, size: 0.07, transparent: true, opacity: 0.4 });
+        const particleSystem = new THREE.Points(particleGeo, particleMat);
+        scene.add(particleSystem);
+
+        // ============================================================
+        //  HELPER FUNCTIONS
+        // ============================================================
+        function createLabel(text, position, color, fontSize) {
+            color = color || '#ffffff';
+            fontSize = fontSize || 38;
+            const canvas = document.createElement('canvas');
+            const ctx = canvas.getContext('2d');
+            ctx.font = 'bold ' + fontSize + 'px Outfit, sans-serif';
+            const textWidth = ctx.measureText(text).width;
+            canvas.width = textWidth + 28;
+            canvas.height = fontSize + 20;
+            ctx.font = 'bold ' + fontSize + 'px Outfit, sans-serif';
+            ctx.fillStyle = color;
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.fillText(text, canvas.width / 2, canvas.height / 2);
+            const texture = new THREE.CanvasTexture(canvas);
+            const spriteMat = new THREE.SpriteMaterial({ map: texture, transparent: true, depthTest: false });
+            const sprite = new THREE.Sprite(spriteMat);
+            sprite.position.copy(position).add(new THREE.Vector3(0, 3.4, 0));
+            sprite.scale.set(textWidth / 65 * 2.4, 1.2, 1);
+            return sprite;
+        }
+
+        // Server rack 3D model
+        function createServerRack(name, color, position) {
+            const group = new THREE.Group();
+            group.name = name;
+
+            // Main body
+            const rackMesh = new THREE.Mesh(
+                new THREE.BoxGeometry(2.4, 3, 1.6),
+                new THREE.MeshStandardMaterial({ color: 0x1a1f2e, metalness: 0.7, roughness: 0.3 })
+            );
+            group.add(rackMesh);
+
+            // Front panel
+            const panelMesh = new THREE.Mesh(
+                new THREE.BoxGeometry(2.2, 2.6, 0.05),
+                new THREE.MeshStandardMaterial({
+                    color: color, metalness: 0.5, roughness: 0.4,
+                    emissive: new THREE.Color(color).multiplyScalar(0.15)
+                })
+            );
+            panelMesh.position.z = 0.78;
+            group.add(panelMesh);
+
+            // LED indicators
+            var ledColors = [0x00ff88, 0x00aaff, 0xffaa00, 0x00ff88];
+            for (var row = 0; row < 4; row++) {
+                for (var col = 0; col < 6; col++) {
+                    var ledMat = new THREE.MeshBasicMaterial({
+                        color: ledColors[row], transparent: true,
+                        opacity: 0.5 + Math.random() * 0.5
+                    });
+                    var led = new THREE.Mesh(new THREE.BoxGeometry(0.08, 0.08, 0.06), ledMat);
+                    led.position.set(-0.6 + col * 0.24, 0.8 - row * 0.5, 0.82);
+                    led.userData.isLed = true;
+                    led.userData.baseOpacity = ledMat.opacity;
+                    group.add(led);
+                }
+            }
+
+            // Glow light
+            var glowLight = new THREE.PointLight(color, 0.35, 6);
+            glowLight.position.set(0, 0, 2);
+            group.add(glowLight);
+
+            group.position.copy(position);
+
+            // Label above
+            var label = createLabel(name, new THREE.Vector3(0, 0, 0), '#' + new THREE.Color(color).getHexString());
+            label.position.set(position.x, position.y + 3.5, position.z);
+            scene.add(label);
+            group.userData.label = label;
+
+            scene.add(group);
+            return group;
+        }
+
+        // Phone model for basic mode
+        function createPhone(position) {
+            var group = new THREE.Group();
+            group.name = 'Phone';
+            var body = new THREE.Mesh(
+                new THREE.BoxGeometry(1.8, 3.2, 0.2),
+                new THREE.MeshStandardMaterial({ color: 0x1e293b, metalness: 0.6, roughness: 0.2 })
+            );
+            group.add(body);
+            var screen = new THREE.Mesh(
+                new THREE.BoxGeometry(1.5, 2.7, 0.02),
+                new THREE.MeshStandardMaterial({ color: 0x0f172a, emissive: 0x0a2540, emissiveIntensity: 0.8 })
+            );
+            screen.position.z = 0.11;
+            group.add(screen);
+            var glow = new THREE.PointLight(0x38bdf8, 0.5, 6);
+            glow.position.set(0, 0, 2);
+            group.add(glow);
+            group.position.copy(position);
+            var label = createLabel('Your Phone', position, '#38bdf8');
+            scene.add(label);
+            group.userData.label = label;
+            scene.add(group);
+            return group;
+        }
+
+        // Phone book model for basic mode
+        function createBook(position) {
+            var group = new THREE.Group();
+            group.name = 'PhoneBook';
+            var cover = new THREE.Mesh(
+                new THREE.BoxGeometry(2.4, 3, 0.5),
+                new THREE.MeshStandardMaterial({ color: 0x854d0e, metalness: 0.2, roughness: 0.8 })
+            );
+            group.add(cover);
+            var pages = new THREE.Mesh(
+                new THREE.BoxGeometry(2.2, 2.8, 0.35),
+                new THREE.MeshStandardMaterial({ color: 0xfef9c3, roughness: 0.9 })
+            );
+            pages.position.set(0.05, 0, 0.02);
+            group.add(pages);
+            var spine = new THREE.Mesh(
+                new THREE.BoxGeometry(0.12, 3, 0.52),
+                new THREE.MeshStandardMaterial({ color: 0x713f12 })
+            );
+            spine.position.x = -1.2;
+            group.add(spine);
+            var glow = new THREE.PointLight(0xfbbf24, 0.4, 6);
+            glow.position.set(0, 0, 2);
+            group.add(glow);
+            group.position.copy(position);
+            var label = createLabel('Phone Book / DNS', position, '#fbbf24');
+            scene.add(label);
+            group.userData.label = label;
+            scene.add(group);
+            return group;
+        }
+
+        // Person model for basic mode
+        function createPerson(position) {
+            var group = new THREE.Group();
+            group.name = 'Person';
+            var head = new THREE.Mesh(
+                new THREE.SphereGeometry(0.55, 16, 16),
+                new THREE.MeshStandardMaterial({ color: 0xfcd34d })
+            );
+            head.position.y = 2;
+            group.add(head);
+            var torso = new THREE.Mesh(
+                new THREE.CylinderGeometry(0.4, 0.55, 1.6, 12),
+                new THREE.MeshStandardMaterial({ color: 0x2563eb })
+            );
+            torso.position.y = 0.8;
+            group.add(torso);
+            var legL = new THREE.Mesh(
+                new THREE.CylinderGeometry(0.16, 0.16, 1.1, 8),
+                new THREE.MeshStandardMaterial({ color: 0x1e40af })
+            );
+            legL.position.set(-0.22, -0.2, 0);
+            group.add(legL);
+            var legR = legL.clone();
+            legR.position.x = 0.22;
+            group.add(legR);
+            var glow = new THREE.PointLight(0x22c55e, 0.4, 6);
+            glow.position.set(0, 1, 2);
+            group.add(glow);
+            group.position.copy(position);
+            var label = createLabel('Rahul / Website', position, '#22c55e');
+            scene.add(label);
+            group.userData.label = label;
+            scene.add(group);
+            return group;
+        }
+
+        // Connection line between objects
+        function createLine(from, to, color) {
+            color = color || 0x1a3040;
+            var midPoint = new THREE.Vector3(
+                (from.x + to.x) / 2,
+                Math.max(from.y, to.y) + 2,
+                (from.z + to.z) / 2
+            );
+            var curve = new THREE.QuadraticBezierCurve3(from.clone(), midPoint, to.clone());
+            var geo = new THREE.BufferGeometry().setFromPoints(curve.getPoints(40));
+            var mat = new THREE.LineBasicMaterial({ color: color, transparent: true, opacity: 0.2 });
+            var line = new THREE.Line(geo, mat);
+            scene.add(line);
+            return line;
+        }
+
+        // ============================================================
+        //  CREATE 3D OBJECTS
+        // ============================================================
+        var POSITIONS = {
+            phone: new THREE.Vector3(-10, 0, 0),
+            book: new THREE.Vector3(0, 0, 0),
+            person: new THREE.Vector3(10, 0, 0),
+            client: new THREE.Vector3(-16, 0, 0),
+            resolver: new THREE.Vector3(-6, 0, -2),
+            root: new THREE.Vector3(2, 8, -4),
+            tld: new THREE.Vector3(10, 0, -2),
+            auth: new THREE.Vector3(18, 0, 0),
+            web: new THREE.Vector3(18, 0, 8)
+        };
+
+        // Basic mode objects
+        var phoneObj = createPhone(POSITIONS.phone);
+        var bookObj = createBook(POSITIONS.book);
+        var personObj = createPerson(POSITIONS.person);
+        var basicLine1 = createLine(POSITIONS.phone, POSITIONS.book, 0x1e40af);
+        var basicLine2 = createLine(POSITIONS.book, POSITIONS.person, 0x166534);
+
+        // Advanced mode objects
+        var clientServer = createServerRack('Client (Browser)', 0x3b82f6, POSITIONS.client);
+        var resolverServer = createServerRack('Recursive Resolver', 0xf59e0b, POSITIONS.resolver);
+        var rootServer = createServerRack('Root Server (.)', 0xef4444, POSITIONS.root);
+        var tldServer = createServerRack('TLD Server (.com)', 0x22c55e, POSITIONS.tld);
+        var authServer = createServerRack('Authoritative NS', 0x14b8a6, POSITIONS.auth);
+        var webServer = createServerRack('Web Server', 0xa855f7, POSITIONS.web);
+        webServer.visible = false;
+        webServer.userData.label.visible = false;
+        var advLine1 = createLine(POSITIONS.client, POSITIONS.resolver, 0x1e40af);
+        var advLine2 = createLine(POSITIONS.resolver, POSITIONS.root, 0x7f1d1d);
+        var advLine3 = createLine(POSITIONS.resolver, POSITIONS.tld, 0x166534);
+        var advLine4 = createLine(POSITIONS.resolver, POSITIONS.auth, 0x115e59);
+
+        var basicObjects = [phoneObj, bookObj, personObj, basicLine1, basicLine2];
+        var advancedObjects = [clientServer, resolverServer, rootServer, tldServer, authServer, webServer, advLine1, advLine2, advLine3, advLine4];
+
+        function hideObjects(arr) {
+            arr.forEach(function(obj) {
+                obj.visible = false;
+                if (obj.userData && obj.userData.label) obj.userData.label.visible = false;
+            });
+        }
+
+        function showObjects(arr) {
+            arr.forEach(function(obj) {
+                if (obj === webServer) return;
+                obj.visible = true;
+                if (obj.userData && obj.userData.label) obj.userData.label.visible = true;
+            });
+        }
+
+        // ============================================================
+        //  DATA PACKET
+        // ============================================================
+        var packetGroup = new THREE.Group();
+        var queryMaterial = new THREE.MeshStandardMaterial({ color: 0xfbbf24, emissive: 0xfbbf24, emissiveIntensity: 0.5 });
+        var responseMaterial = new THREE.MeshStandardMaterial({ color: 0x34d399, emissive: 0x34d399, emissiveIntensity: 0.5 });
+        var connectMaterial = new THREE.MeshStandardMaterial({ color: 0x60a5fa, emissive: 0x60a5fa, emissiveIntensity: 0.5 });
+
+        var envelopeMesh = new THREE.Mesh(new THREE.BoxGeometry(0.7, 0.45, 0.25), queryMaterial);
+        var glowSphere = new THREE.Mesh(
+            new THREE.SphereGeometry(0.55, 16, 16),
+            new THREE.MeshBasicMaterial({ color: 0xfbbf24, transparent: true, opacity: 0.15 })
+        );
+        packetGroup.add(envelopeMesh);
+        packetGroup.add(glowSphere);
+        packetGroup.visible = false;
+        scene.add(packetGroup);
+
+        // Packet label sprite
+        var packetLabel;
+        var pLabelCanvas = document.createElement('canvas');
+        var pLabelCtx = pLabelCanvas.getContext('2d');
+
+        function initPacketLabel() {
+            var tex = new THREE.CanvasTexture(pLabelCanvas);
+            packetLabel = new THREE.Sprite(new THREE.SpriteMaterial({ map: tex, transparent: true, depthTest: false }));
+            packetLabel.scale.set(4, 1.5, 1);
+            packetLabel.visible = false;
+            scene.add(packetLabel);
+        }
+
+        function updatePacketLabel(text) {
+            var fs = 34;
+            pLabelCtx.font = 'bold ' + fs + 'px IBM Plex Mono, monospace';
+            var tw = pLabelCtx.measureText(text).width;
+            pLabelCanvas.width = tw + 28;
+            pLabelCanvas.height = fs + 18;
+            pLabelCtx.font = 'bold ' + fs + 'px IBM Plex Mono, monospace';
+            // Background pill
+            pLabelCtx.fillStyle = 'rgba(12,18,35,0.85)';
+            pLabelCtx.beginPath();
+            pLabelCtx.roundRect(0, 0, pLabelCanvas.width, pLabelCanvas.height, 8);
+            pLabelCtx.fill();
+            pLabelCtx.strokeStyle = 'rgba(45,212,191,0.35)';
+            pLabelCtx.lineWidth = 2;
+            pLabelCtx.stroke();
+            // Text
+            pLabelCtx.fillStyle = '#e2e8f0';
+            pLabelCtx.textAlign = 'center';
+            pLabelCtx.textBaseline = 'middle';
+            pLabelCtx.fillText(text, pLabelCanvas.width / 2, pLabelCanvas.height / 2);
+            packetLabel.material.map.needsUpdate = true;
+            packetLabel.scale.set(pLabelCanvas.width / 100 * 1.8, 0.75, 1);
+        }
+
+        initPacketLabel();
+
+        // Trail particles
+        var trailCount = 25;
+        var trailGeo = new THREE.BufferGeometry();
+        var trailPositions = new Float32Array(trailCount * 3);
+        trailGeo.setAttribute('position', new THREE.BufferAttribute(trailPositions, 3));
+        var trailMat = new THREE.PointsMaterial({ color: 0xfbbf24, size: 0.1, transparent: true, opacity: 0.5 });
+        var trailPoints = new THREE.Points(trailGeo, trailMat);
+        scene.add(trailPoints);
+        var trailIndex = 0;
+
+        function addTrailPoint(pos) {
+            var i = trailIndex % trailCount;
+            trailPositions[i * 3] = pos.x + (Math.random() - 0.5) * 0.3;
+            trailPositions[i * 3 + 1] = pos.y + (Math.random() - 0.5) * 0.3;
+            trailPositions[i * 3 + 2] = pos.z + (Math.random() - 0.5) * 0.3;
+            trailGeo.attributes.position.needsUpdate = true;
+            trailIndex++;
+        }
+
+        function clearTrail() {
+            for (var i = 0; i < trailCount * 3; i++) trailPositions[i] = -1000;
+            trailGeo.attributes.position.needsUpdate = true;
+            trailIndex = 0;
+        }
+        clearTrail();
+
+        // Animate packet between two points
+        function animatePacket(from, to, material, labelText, duration) {
+            duration = duration || 1.8;
+            clearTrail();
+            envelopeMesh.material = material;
+            glowSphere.material.color.copy(material.color);
+            trailMat.color.copy(material.color);
+            packetGroup.position.copy(from);
+            updatePacketLabel(labelText);
+
+            return gsap.timeline()
+                .set(packetGroup, { visible: true })
+                .set(packetLabel, { visible: true })
+                .to(packetGroup.position, {
+                    x: to.x, y: to.y, z: to.z,
+                    duration: duration,
+                    ease: 'power1.inOut',
+                    onUpdate: function() {
+                        packetLabel.position.copy(packetGroup.position).add(new THREE.Vector3(0, 1.2, 0));
+                        addTrailPoint(packetGroup.position);
+                    }
+                })
+                .set([packetGroup, packetLabel], { visible: false })
+                .call(clearTrail);
+        }
+
+        // Pulse animation on an object
+        function pulseObject(obj) {
+            gsap.to(obj.scale, {
+                x: 1.15, y: 1.15, z: 1.15,
+                duration: 0.25, yoyo: true, repeat: 1,
+                ease: 'power2.inOut'
+            });
+            obj.children.forEach(function(child) {
+                if (child.userData.isLed) {
+                    gsap.to(child.material, { opacity: 1, duration: 0.15, yoyo: true, repeat: 3, ease: 'steps(1)' });
+                }
+            });
+        }
+
+        // Move camera to focus on object
+        function focusCamera(targetObj) {
+            var pos = targetObj.position.clone();
+            gsap.to(controls.target, { x: pos.x, y: pos.y, z: pos.z, duration: 1.2, ease: 'power2.inOut' });
+            gsap.to(camera.position, { x: pos.x + 2, y: pos.y + 5, z: pos.z + 12, duration: 1.2, ease: 'power2.inOut' });
+        }
+
+        // ============================================================
+        //  UI REFERENCES
+        // ============================================================
+        function $(id) { return document.getElementById(id); }
+
+        var domainInput = $('domain-input');
+        var searchBtn = $('search-btn');
+        var searchContainer = $('search-container');
+        var basicIntro = $('basic-intro');
+        var simContainer = $('sim-container');
+        var modeLabelEl = $('mode-label');
+        var stepCurrentEl = $('step-current');
+        var stepTotalEl = $('step-total');
+        var descriptionEl = $('description');
+        var statusBadgeEl = $('status-badge');
+        var statusTextEl = $('status-text');
+        var terminalEl = $('terminal');
+        var comparisonPanel = $('comparison-panel');
+        var prevBtn = $('prev-btn');
+        var nextBtn = $('next-btn');
+        var autoplayBtn = $('autoplay-btn');
+        var voiceBtn = $('voice-btn');
+        var aboutBtn = $('about-btn');
+        var restartBtn = $('restart-btn');
+        var tourBtn = $('tour-btn');
+        var switchBtn = $('switch-btn');
+        var switchLabel = $('switch-label');
+        var websiteOverlay = $('website-overlay');
+        var addressBar = $('address-bar');
+        var websiteContent = $('website-content');
+        var closeWebBtn = $('close-web-btn');
+        var resetWebBtn = $('reset-web-btn');
+        var aboutOverlay = $('about-overlay');
+        var closeAboutBtn = $('close-about-btn');
+        var disclaimerOverlay = $('disclaimer-overlay');
+        var enterBtn = $('enter-btn');
+        var modeOverlay = $('mode-overlay');
+        var modeBox = $('mode-box');
+        var modeBasicBtn = $('mode-basic-btn');
+        var modeAdvBtn = $('mode-adv-btn');
+
+        // Guide arrow elements
+        var gaTourEl = $('ga-tour');
+        var gaNextEl = $('ga-next');
+        var gaAutoEl = $('ga-autoplay');
+
+        // Tour tooltip elements
+        var tourTooltip = $('tour-tooltip');
+        var tourArrow = $('tour-arrow');
+        var tourText = $('tour-text');
+        var tourDots = $('tour-dots');
+        var tourSkipBtn = $('tour-skip-btn');
+        var tourNextBtn = $('tour-next-btn');
+
+        // State variables
+        var currentMode = 'basic';
+        var mockIp = '';
+        var isVoiceOn = false;
+        var isAutoPlaying = false;
+        var autoPlayTimer = null;
+        var currentStep = 0;
+        var simulationSteps = [];
+        var guideArrowsShown = false;
+
+        // ============================================================
+        //  VOICE - speaks every step, no skipping
+        // ============================================================
+        function speak(text, onEndCallback) {
+            speechSynthesis.cancel();
+            var cleanText = text.replace(/<[^>]*>/g, '').replace(/&[^;]+;/g, ' ').replace(/\s+/g, ' ').trim();
+            var utterance = new SpeechSynthesisUtterance(cleanText);
+            utterance.rate = 0.92;
+            utterance.pitch = 1.0;
+            utterance.volume = 1.0;
+            if (onEndCallback) {
+                utterance.onend = onEndCallback;
+                utterance.onerror = onEndCallback;
+            }
+            speechSynthesis.speak(utterance);
+        }
+
+        // ============================================================
+        //  TERMINAL LOG
+        // ============================================================
+        function termLog(message, type) {
+            type = type || 'log-info';
+            terminalEl.classList.remove('hidden');
+            var div = document.createElement('div');
+            var timestamp = new Date().toLocaleTimeString('en-US', { hour12: false });
+            div.innerHTML = '<span class="text-slate-600">[' + timestamp + ']</span> <span class="' + type + '">' + message + '</span>';
+            terminalEl.appendChild(div);
+            terminalEl.scrollTop = terminalEl.scrollHeight;
+        }
+
+        // ============================================================
+        //  STATUS & UI UPDATES
+        // ============================================================
+        function setStatus(type, text) {
+            statusBadgeEl.className = 'status-badge status-' + type;
+            statusTextEl.textContent = text;
+        }
+
+        function setControlsDisabled(disabled) {
+            prevBtn.disabled = disabled;
+            nextBtn.disabled = disabled;
+            autoplayBtn.disabled = disabled;
+            voiceBtn.disabled = disabled;
+            restartBtn.disabled = disabled;
+        }
+
+        function updateUI() {
+            if (!simulationSteps.length) return;
+
+            stepCurrentEl.textContent = currentStep + 1;
+            descriptionEl.innerHTML = '<p>' + simulationSteps[currentStep].description + '</p>';
+            descriptionEl.scrollTop = 0;
+
+            prevBtn.disabled = currentStep === 0 || isAutoPlaying;
+            nextBtn.disabled = currentStep === simulationSteps.length - 1 || isAutoPlaying;
+            autoplayBtn.disabled = currentStep === simulationSteps.length - 1;
+
+            if (isAutoPlaying) {
+                autoplayBtn.querySelector('span').textContent = 'Pause';
+                autoplayBtn.classList.add('btn-auto-on');
+            } else {
+                autoplayBtn.querySelector('span').textContent = 'Auto-Play';
+                autoplayBtn.classList.remove('btn-auto-on');
+            }
+
+            var stepData = simulationSteps[currentStep];
+            setStatus(stepData.statusType, stepData.statusText);
+
+            // Highlight comparison row in basic mode
+            if (currentMode === 'basic' && stepData.compareRow) {
+                document.querySelectorAll('.cmp-table tr').forEach(function(r) { r.classList.remove('active'); });
+                var row = $('cmp-' + stepData.compareRow);
+                if (row) row.classList.add('active');
+            }
+        }
+
+        function stopAutoPlay() {
+            isAutoPlaying = false;
+            clearTimeout(autoPlayTimer);
+            updateUI();
+        }
+
+        // ============================================================
+        //  GUIDE ARROWS
+        // ============================================================
+        function positionGuideArrow(arrowEl, targetId, direction) {
+            var target = $(targetId);
+            if (!target || !arrowEl) return;
+            var rect = target.getBoundingClientRect();
+            if (direction === 'down') {
+                arrowEl.style.left = (rect.left + rect.width / 2 - arrowEl.offsetWidth / 2) + 'px';
+                arrowEl.style.top = (rect.top - arrowEl.offsetHeight - 6) + 'px';
+            } else {
+                arrowEl.style.left = (rect.left + rect.width / 2 - arrowEl.offsetWidth / 2) + 'px';
+                arrowEl.style.top = (rect.bottom + 6) + 'px';
+            }
+        }
+
+        function showGuideArrow(arrowEl, targetId, direction) {
+            var target = $(targetId);
+            if (target) target.classList.add('glow-ring');
+            arrowEl.style.visibility = 'hidden';
+            arrowEl.classList.add('visible');
+            requestAnimationFrame(function() {
+                positionGuideArrow(arrowEl, targetId, direction);
+                arrowEl.style.visibility = '';
+            });
+        }
+
+        function hideGuideArrow(arrowEl, targetId) {
+            arrowEl.classList.remove('visible');
+            var target = $(targetId);
+            if (target) target.classList.remove('glow-ring');
+        }
+
+        function hideAllGuideArrows() {
+            hideGuideArrow(gaTourEl, 'tour-btn');
+            hideGuideArrow(gaNextEl, 'next-btn');
+            hideGuideArrow(gaAutoEl, 'autoplay-btn');
+        }
+
+        // Dismiss buttons
+        document.querySelectorAll('.ga-x').forEach(function(btn) {
+            btn.addEventListener('click', function(e) {
+                e.stopPropagation();
+                var gaId = btn.dataset.ga;
+                var arrowEl = $(gaId);
+                if (gaId === 'ga-tour') hideGuideArrow(arrowEl, 'tour-btn');
+                if (gaId === 'ga-next') hideGuideArrow(arrowEl, 'next-btn');
+                if (gaId === 'ga-autoplay') hideGuideArrow(arrowEl, 'autoplay-btn');
+            });
+        });
+
+        window.addEventListener('resize', function() {
+            if (gaTourEl.classList.contains('visible')) positionGuideArrow(gaTourEl, 'tour-btn', 'down');
+            if (gaNextEl.classList.contains('visible')) positionGuideArrow(gaNextEl, 'next-btn', 'up');
+            if (gaAutoEl.classList.contains('visible')) positionGuideArrow(gaAutoEl, 'autoplay-btn', 'up');
+        });
+
+        function showSimulationGuideArrows() {
+            if (guideArrowsShown) return;
+            guideArrowsShown = true;
+            setTimeout(function() {
+                showGuideArrow(gaNextEl, 'next-btn', 'up');
+                showGuideArrow(gaAutoEl, 'autoplay-btn', 'up');
+            }, 600);
+        }
+
+        // ============================================================
+        //  TOUR SYSTEM (NO dark overlay - just tooltip + glow ring)
+        // ============================================================
+        var tourStep = 0;
+        var isTourActive = false;
+
+        function getTourSteps() {
+            var steps = [];
+            if (currentMode === 'basic') {
+                steps.push({ id: 'next-btn', text: 'Press "Next" to move step by step through the phone book analogy. Each step shows a new animation.', arrow: 'down' });
+                steps.push({ id: 'autoplay-btn', text: '"Auto-Play" plays all steps automatically with voice narration. Just sit back and watch!', arrow: 'down' });
+                steps.push({ id: 'voice-btn', text: '"Voice" turns narration on or off when you navigate manually.', arrow: 'down' });
+                steps.push({ id: 'prev-btn', text: '"Prev" takes you back to review the previous step.', arrow: 'down' });
+                steps.push({ id: 'switch-btn', text: 'This button switches between Basic and Advanced mode. In Basic mode it says "Advanced" to go to Advanced. In Advanced mode it says "Basic" to go back.', arrow: 'up' });
+            } else {
+                steps.push({ id: 'domain-input', text: 'Type any website domain here, like www.google.com or youtube.com.', arrow: 'up' });
+                steps.push({ id: 'search-btn', text: 'Press "Resolve" to start the full DNS lookup simulation.', arrow: 'up' });
+                steps.push({ id: 'next-btn', text: '"Next" advances through each DNS step with 3D animation.', arrow: 'down' });
+                steps.push({ id: 'autoplay-btn', text: '"Auto-Play" runs all steps automatically with voice explanation.', arrow: 'down' });
+                steps.push({ id: 'voice-btn', text: '"Voice" toggles narration during manual navigation.', arrow: 'down' });
+            }
+            steps.push({ id: 'about-btn', text: '"About" opens a detailed reference page about how DNS works.', arrow: 'down' });
+            steps.push({ id: 'restart-btn', text: '"Restart" resets everything so you can start over.', arrow: 'down' });
+            steps.push({ id: 'tour-btn', text: 'Press "Tour" anytime to see this guide again. Enjoy the simulation!', arrow: 'up' });
+            return steps;
+        }
+
+        function positionTour() {
+            var steps = getTourSteps();
+            if (tourStep >= steps.length) return;
+            var step = steps[tourStep];
+            var el = $(step.id);
+            if (!el) return;
+
+            // Remove all glow rings first
+            document.querySelectorAll('.glow-ring').forEach(function(e) { e.classList.remove('glow-ring'); });
+            // Add glow to current target
+            el.classList.add('glow-ring');
+
+            var rect = el.getBoundingClientRect();
+
+            if (step.arrow === 'up') {
+                tourArrow.className = 'tour-arrow-up';
+                tourTooltip.style.top = (rect.bottom + 14) + 'px';
+                tourTooltip.style.bottom = 'auto';
+            } else {
+                tourArrow.className = 'tour-arrow-down';
+                tourTooltip.style.top = (rect.top - tourTooltip.offsetHeight - 14) + 'px';
+                tourTooltip.style.bottom = 'auto';
+            }
+            tourTooltip.style.left = Math.max(12, Math.min(rect.left, window.innerWidth - 360)) + 'px';
+
+            tourText.textContent = step.text;
+            tourDots.innerHTML = steps.map(function(_, i) {
+                return '<div style="width:7px;height:7px;border-radius:50%;background:' + (i === tourStep ? '#2dd4bf' : '#1e293b') + ';transition:background 0.3s"></div>';
+            }).join('');
+            tourNextBtn.textContent = tourStep === steps.length - 1 ? 'Done' : 'Next';
+
+            // SPEAK the tour step
+            speak(step.text);
+        }
+
+        function startTour() {
+            if (isTourActive) { stopTour(); return; }
+            isTourActive = true;
+            tourStep = 0;
+            document.querySelectorAll('.glow-ring').forEach(function(e) { e.classList.remove('glow-ring'); });
+            tourTooltip.style.visibility = 'hidden';
+            tourTooltip.classList.add('active');
+            requestAnimationFrame(function() {
+                positionTour();
+                tourTooltip.style.visibility = '';
+            });
+        }
+
+        function stopTour() {
+            if (!isTourActive) return;
+            isTourActive = false;
+            speechSynthesis.cancel();
+            tourTooltip.classList.remove('active');
+            document.querySelectorAll('.glow-ring').forEach(function(e) { e.classList.remove('glow-ring'); });
+        }
+
+        tourNextBtn.addEventListener('click', function() {
+            var steps = getTourSteps();
+            var prevEl = $(steps[tourStep].id);
+            if (prevEl) prevEl.classList.remove('glow-ring');
+            if (tourStep < steps.length - 1) {
+                tourStep++;
+                positionTour();
+            } else {
+                stopTour();
+            }
+        });
+
+        tourSkipBtn.addEventListener('click', stopTour);
+        window.addEventListener('resize', function() { if (isTourActive) positionTour(); });
+
+        // ============================================================
+        //  BASIC MODE STEPS (phone book analogy)
+        // ============================================================
+        function getBasicSteps() {
+            return [
+                {
+                    description: '<b class="text-sky-300">Step 1: You want to call your friend Rahul.</b><br><br>You pick up your phone. But here is the problem: <b class="text-amber-300">your phone does NOT understand the name "Rahul"</b>. Phones only understand phone numbers, like <code style="font-family:IBM Plex Mono,monospace" class="text-teal-300">9876543210</code>.<br><br>Same thing on the internet! When you type <b class="text-sky-300">google.com</b>, computers do NOT understand names. They only understand <b class="text-amber-300">IP addresses</b> like <code style="font-family:IBM Plex Mono,monospace" class="text-teal-300">142.250.183.14</code>.',
+                    voice: 'Step 1. You want to call your friend Rahul. You pick up your phone. But phones do not understand names like Rahul. They only understand phone numbers, like 9 8 7 6 5 4 3 2 1 0. The same thing happens on the internet. When you type google dot com, computers do not understand that name. They only understand numbers called IP addresses, like 142 dot 250 dot 183 dot 14.',
+                    focusTarget: phoneObj,
+                    statusType: 'searching', statusText: 'Need a number...',
+                    compareRow: '1',
+                    animation: function() { focusCamera(phoneObj); pulseObject(phoneObj); }
+                },
+                {
+                    description: '<b class="text-amber-300">Step 2: So what do you do?</b><br><br>You open your <b class="text-amber-300">Contacts App</b> — your Phone Book! You search for "Rahul" to find his number.<br><br>On the internet, your browser does the same thing. It asks the <b class="text-amber-300">DNS Server</b> — which works like a phone book for websites!<br><br>Watch the yellow packet fly from phone to phone book...',
+                    voice: 'Step 2. So what do you do? You open your Contacts App, your phone book! You search for Rahul to find his phone number. On the internet, your browser does the same thing. It asks the DNS Server, which works exactly like a phone book, but for websites. Watch the yellow packet fly from the phone to the phone book.',
+                    focusTarget: bookObj,
+                    statusType: 'searching', statusText: 'Opening phone book...',
+                    compareRow: '3',
+                    animation: function() {
+                        focusCamera(bookObj);
+                        animatePacket(POSITIONS.phone, POSITIONS.book, queryMaterial, 'Looking up: Rahul', 2.5);
+                        gsap.to(bookObj.rotation, { y: 0.5, duration: 0.8, delay: 2.8, yoyo: true, repeat: 1 });
+                    }
+                },
+                {
+                    description: '<b class="text-emerald-300">Step 3: Found it!</b> The phone book has the answer!<br><br>Phone: <b class="text-sky-300">Rahul</b> = <code style="font-family:IBM Plex Mono,monospace" class="text-teal-300">9876543210</code><br>Internet: <b class="text-sky-300">google.com</b> = <code style="font-family:IBM Plex Mono,monospace" class="text-teal-300">142.250.183.14</code><br><br>The phone book converted a <b class="text-amber-300">name into a number</b>. DNS does the exact same job!<br><br>Watch the green packet bring the number back...',
+                    voice: 'Step 3. Found it! The phone book has the answer! Rahul maps to phone number 9 8 7 6 5 4 3 2 1 0. And google dot com maps to IP address 142 dot 250 dot 183 dot 14. The phone book converted a name into a number. DNS does the exact same job for websites. Watch the green packet bring the number back.',
+                    focusTarget: bookObj,
+                    statusType: 'found', statusText: 'Number found!',
+                    compareRow: '2',
+                    animation: function() { pulseObject(bookObj); animatePacket(POSITIONS.book, POSITIONS.phone, responseMaterial, 'Number: 9876543210', 2); }
+                },
+                {
+                    description: '<b class="text-sky-300">Step 4: Now your phone has the number!</b><br><br>Your phone uses the number and the mobile network to <b class="text-emerald-300">connect the call</b> to Rahul.<br><br>Your browser uses the IP address and the internet to <b class="text-emerald-300">connect to the website</b>.<br><br>The call is ringing... the website is loading!',
+                    voice: 'Step 4. Now your phone has the number! Your phone uses the phone number and the mobile network to connect the call to Rahul. Your browser uses the IP address and the internet to connect to the website. The call is ringing. The website is loading!',
+                    focusTarget: personObj,
+                    statusType: 'found', statusText: 'Connecting...',
+                    compareRow: '5',
+                    animation: function() {
+                        focusCamera(personObj);
+                        animatePacket(POSITIONS.phone, POSITIONS.person, connectMaterial, 'Connecting...', 3).call(function() { pulseObject(personObj); });
+                    }
+                },
+                {
+                    description: '<b class="text-emerald-300">Step 5: Connected!</b><br><br>Phone: You said "Rahul" then the Phone Book gave the number then <b class="text-emerald-300">Call Connected!</b><br><br>Internet: You typed "google.com" then DNS gave the IP address then <b class="text-emerald-300">Website Opens!</b><br><br><b class="text-amber-300">That is DNS!</b> It converts names humans understand into numbers computers understand.',
+                    voice: 'Step 5. Connected! On the phone side, you searched Rahul, got his phone number, and the call connected. On the internet side, you typed google dot com, DNS found its IP address, and the website opened. That is DNS! It converts names that humans understand into numbers that computers understand. Just like your phone book.',
+                    focusTarget: personObj,
+                    statusType: 'found', statusText: 'Connected!',
+                    compareRow: '4',
+                    animation: function() {
+                        gsap.to(personObj.rotation, { y: Math.PI * 2, duration: 2, ease: 'power2.inOut' });
+                        gsap.to(phoneObj.rotation, { y: Math.PI * 2, duration: 2, ease: 'power2.inOut' });
+                        gsap.to(bookObj.rotation, { y: Math.PI * 2, duration: 2, ease: 'power2.inOut' });
+                    }
+                },
+                {
+                    description: '<b class="text-teal-300">Step 6: Why is DNS needed?</b><br><br>Imagine remembering these numbers for every website:<br><code style="font-family:IBM Plex Mono,monospace" class="text-slate-400">172.217.160.78 &middot; 151.101.1.69 &middot; 104.18.32.47</code><br><br>Impossible! DNS lets us use easy names: <b class="text-sky-300">google.com, youtube.com, facebook.com</b><br><br><b class="text-amber-300">Remember:</b> DNS is the internet phone book. It converts website names into IP addresses.<br><br>Press <b class="text-teal-300">"Advanced &rarr;"</b> at the top to try Advanced Mode!',
+                    voice: 'Step 6. Why is DNS needed? Imagine if you had to remember numbers like 172 dot 217 dot 160 dot 78 for every website. That would be impossible! So DNS lets us use easy names like google dot com and youtube dot com. Remember this one line. DNS is the internet phone book. It converts website names into IP addresses. If you want to see the full technical details, press the Advanced button at the top right to try Advanced Mode.',
+                    focusTarget: bookObj,
+                    statusType: 'found', statusText: 'Complete!',
+                    compareRow: null,
+                    animation: function() {
+                        gsap.to(camera.position, { x: 0, y: 8, z: 22, duration: 1.5 });
+                        gsap.to(controls.target, { x: 0, y: 0, z: 0, duration: 1.5 });
+                    }
+                }
+            ];
+        }
+
+        // ============================================================
+        //  ADVANCED MODE STEPS
+        // ============================================================
+        function getAdvancedSteps(domain) {
+            var tld = domain.split('.').pop() || 'com';
+            var baseDomain = domain.split('.').slice(-2).join('.') || 'example.com';
+            return [
+                { description: 'Your browser wants to load <b class="text-teal-300">' + domain + '</b>. It asks the OS to find the IP address.', voice: 'Your browser wants to load ' + domain + '. It asks the operating system to find the IP address for this domain.', focusTarget: clientServer, statusType: 'searching', statusText: 'Query initiated', log: ['QUERY: A ' + domain, 'log-query'], animation: function() { focusCamera(clientServer); pulseObject(clientServer); } },
+                { description: 'OS checks <b class="text-teal-300">/etc/hosts</b> file. No match found.', voice: 'First, the operating system checks the hosts file, a static local lookup table. No match is found.', focusTarget: clientServer, statusType: 'searching', statusText: 'Hosts check', log: ['CHECK: /etc/hosts - No entry', 'log-info'], animation: function() { gsap.to(clientServer.rotation, { y: 0.3, duration: 0.4, yoyo: true, repeat: 1 }); } },
+                { description: 'OS checks <b class="text-teal-300">local DNS cache</b>. Cache miss.', voice: 'Next, the OS checks its local DNS cache. Cache miss. No valid record found.', focusTarget: clientServer, statusType: 'searching', statusText: 'Cache miss', log: ['CHECK: Local cache - MISS', 'log-error'], animation: function() { gsap.to(clientServer.rotation, { y: -0.3, duration: 0.4, yoyo: true, repeat: 1 }); } },
+                { description: 'Sends <b class="text-amber-300">recursive query</b> to the Recursive Resolver.', voice: 'The system sends a recursive query to the Recursive Resolver. This is usually your ISPs DNS server.', focusTarget: resolverServer, statusType: 'searching', statusText: 'Querying resolver', log: ['SEND: Recursive query to Resolver', 'log-query'], animation: function() { animatePacket(POSITIONS.client, POSITIONS.resolver, queryMaterial, 'Query: ' + domain).call(function() { pulseObject(resolverServer); }); } },
+                { description: 'Resolver checks its cache. <b class="text-red-400">Cache miss</b>. Begins iterative resolution.', voice: 'The Recursive Resolver checks its own cache. Cache miss. It begins the iterative resolution process.', focusTarget: resolverServer, statusType: 'searching', statusText: 'Resolver miss', log: ['CHECK: Resolver cache - MISS', 'log-error'], animation: function() { gsap.to(resolverServer.rotation, { y: 0.2, duration: 0.4, yoyo: true, repeat: 1 }); } },
+                { description: 'Sends <b class="text-amber-300">iterative query</b> to a Root Name Server.', voice: 'The resolver sends an iterative query to a Root Name Server. There are 13 root server addresses with over 600 copies worldwide.', focusTarget: rootServer, statusType: 'searching', statusText: 'Querying root', log: ['SEND: Iterative to Root Server', 'log-query'], animation: function() { animatePacket(POSITIONS.resolver, POSITIONS.root, queryMaterial, 'Query: ' + domain).call(function() { pulseObject(rootServer); }); } },
+                { description: 'Root Server returns a <b class="text-emerald-300">referral</b> to .' + tld + ' TLD servers.', voice: 'The Root Server returns a referral, pointing to the TLD servers for dot ' + tld + '.', focusTarget: resolverServer, statusType: 'searching', statusText: 'Root referral', log: ['RECV: Referral to .' + tld + ' TLD', 'log-response'], animation: function() { animatePacket(POSITIONS.root, POSITIONS.resolver, responseMaterial, 'Referral: .' + tld).call(function() { pulseObject(resolverServer); }); } },
+                { description: 'Resolver queries the <b class="text-teal-300">.' + tld + ' TLD server</b>.', voice: 'The resolver now queries the dot ' + tld + ' TLD server and asks: who is authoritative for ' + baseDomain + '?', focusTarget: tldServer, statusType: 'searching', statusText: 'Querying TLD', log: ['SEND: Query to .' + tld + ' TLD', 'log-query'], animation: function() { animatePacket(POSITIONS.resolver, POSITIONS.tld, queryMaterial, 'Query: NS ' + baseDomain).call(function() { pulseObject(tldServer); }); } },
+                { description: 'TLD responds with <b class="text-emerald-300">referral</b> to Authoritative NS.', voice: 'The TLD server responds with a referral to the Authoritative Name Servers for ' + baseDomain + '.', focusTarget: resolverServer, statusType: 'searching', statusText: 'TLD referral', log: ['RECV: Referral to Auth NS', 'log-response'], animation: function() { animatePacket(POSITIONS.tld, POSITIONS.resolver, responseMaterial, 'Referral: ' + baseDomain + ' NS').call(function() { pulseObject(resolverServer); }); } },
+                { description: 'Resolver queries <b class="text-teal-300">Authoritative NS</b> for the A record.', voice: 'The resolver sends the final query to the Authoritative Name Server, asking for the A record of ' + domain + '.', focusTarget: authServer, statusType: 'searching', statusText: 'Querying auth', log: ['SEND: Query to Auth NS', 'log-query'], animation: function() { animatePacket(POSITIONS.resolver, POSITIONS.auth, queryMaterial, 'Query: A ' + domain).call(function() { pulseObject(authServer); }); } },
+                { description: 'Authoritative NS returns <b class="text-emerald-300">' + mockIp + '</b> with TTL 300s.', voice: 'The Authoritative Server returns the IP address: ' + mockIp + ', with a Time To Live of 300 seconds. The resolver caches this answer.', focusTarget: resolverServer, statusType: 'found', statusText: 'IP resolved!', log: ['RECV: A ' + domain + ' = ' + mockIp, 'log-response'], animation: function() { webServer.visible = true; webServer.userData.label.visible = true; animatePacket(POSITIONS.auth, POSITIONS.resolver, responseMaterial, 'IP: ' + mockIp).call(function() { pulseObject(resolverServer); }); } },
+                { description: 'Resolver returns <b class="text-emerald-300">' + mockIp + '</b> to your browser. Cached.', voice: 'The resolver passes the IP address back to your operating system and browser. Every level caches this answer.', focusTarget: clientServer, statusType: 'found', statusText: 'Delivered', log: ['RECV: ' + domain + ' = ' + mockIp, 'log-response'], animation: function() { animatePacket(POSITIONS.resolver, POSITIONS.client, responseMaterial, 'IP: ' + mockIp).call(function() { pulseObject(clientServer); }); } },
+                { description: '<b class="text-emerald-300">DNS complete!</b> Browser connects to ' + mockIp + ':443.', voice: 'DNS resolution is complete! Your browser now connects to the web server at ' + mockIp + ' on port 443. The website is loading!', focusTarget: webServer, statusType: 'found', statusText: 'Connected!', log: ['CONNECT: TCP to ' + mockIp + ':443', 'log-info'], animation: function() { animatePacket(POSITIONS.client, POSITIONS.web, connectMaterial, 'TCP to ' + mockIp).call(function() { pulseObject(webServer); setTimeout(function() { showWebsite(domain); }, 1200); }); } }
+            ];
+        }
+
+        // ============================================================
+        //  MODE MANAGEMENT
+        // ============================================================
+        function activateMode(mode) {
+            currentMode = mode;
+            currentStep = 0;
+            simulationSteps = [];
+            packetGroup.visible = false;
+            packetLabel.visible = false;
+            clearTrail();
+            webServer.visible = false;
+            webServer.userData.label.visible = false;
+            terminalEl.innerHTML = '';
+            terminalEl.classList.add('hidden');
+            websiteOverlay.classList.add('hidden');
+
+            if (mode === 'basic') {
+                modeLabelEl.textContent = 'BASIC MODE';
+                switchLabel.innerHTML = 'Advanced &#8594;';
+                hideObjects(advancedObjects);
+                showObjects(basicObjects);
+                searchContainer.classList.add('hidden');
+                basicIntro.classList.add('hidden');
+                comparisonPanel.classList.remove('hidden');
+                simulationSteps = getBasicSteps();
+                stepTotalEl.textContent = simulationSteps.length;
+                simContainer.classList.remove('hidden');
+                setControlsDisabled(false);
+                simulationSteps[0].animation();
+                updateUI();
+                gsap.to(camera.position, { x: 0, y: 8, z: 22, duration: 1 });
+                gsap.to(controls.target, { x: 0, y: 0, z: 0, duration: 1 });
+            } else {
+                modeLabelEl.textContent = 'ADVANCED MODE';
+                switchLabel.innerHTML = '&#8592; Basic';
+                hideObjects(basicObjects);
+                showObjects(advancedObjects);
+                basicIntro.classList.add('hidden');
+                searchContainer.classList.remove('hidden');
+                simContainer.classList.add('hidden');
+                comparisonPanel.classList.add('hidden');
+                setControlsDisabled(true);
+                gsap.to(camera.position, { x: 0, y: 8, z: 30, duration: 1 });
+                gsap.to(controls.target, { x: 0, y: 0, z: 0, duration: 1 });
+            }
+            setStatus('idle', 'Idle');
+        }
+
+        function startAdvancedSimulation() {
+            var domain = domainInput.value.trim() || 'www.example.com';
+            mockIp = Math.floor(Math.random() * 254 + 1) + '.' + Math.floor(Math.random() * 255) + '.' + Math.floor(Math.random() * 255) + '.' + Math.floor(Math.random() * 254 + 1);
+            simulationSteps = getAdvancedSteps(domain);
+            stepTotalEl.textContent = simulationSteps.length;
+            searchContainer.classList.add('hidden');
+            simContainer.classList.remove('hidden');
+            comparisonPanel.classList.add('hidden');
+            setControlsDisabled(false);
+            termLog('DNS resolution for ' + domain, 'log-info');
+            simulationSteps[0].animation();
+            if (simulationSteps[0].log) termLog(simulationSteps[0].log[0], simulationSteps[0].log[1]);
+            updateUI();
+            if (isVoiceOn || isAutoPlaying) {
+                focusCamera(simulationSteps[0].focusTarget);
+                speak(simulationSteps[0].voice || simulationSteps[0].description);
+            }
+            if (isAutoPlaying) autoPlayTimer = setTimeout(doAutoPlay, 7000);
+        }
+
+        function showWebsite(domain) {
+            window.open('https://' + domain, '_blank');
+            addressBar.textContent = 'https://' + domain;
+            websiteContent.innerHTML = '<svg class="w-14 h-14 text-emerald-400 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg><h1 class="text-2xl font-bold text-slate-800 mb-2">DNS Resolved!</h1><p class="text-slate-500 text-sm">' + domain + ' = ' + mockIp + '</p>';
+            websiteOverlay.classList.remove('hidden');
+        }
+
+        // Navigate to next step - ALWAYS speaks when voice/auto is on
+        function handleNextStep() {
+            if (currentStep < simulationSteps.length - 1) {
+                currentStep++;
+                var step = simulationSteps[currentStep];
+                step.animation();
+                if (step.log) termLog(step.log[0], step.log[1]);
+
+                // Voice ALWAYS speaks when on - never skip
+                if (isVoiceOn || isAutoPlaying) {
+                    focusCamera(step.focusTarget);
+                    if (isAutoPlaying) {
+                        // In auto-play: speak and wait for voice to END, then schedule next
+                        speak(step.voice || step.description, function() {
+                            // Voice finished, wait 2 seconds for animation, then next
+                            autoPlayTimer = setTimeout(doAutoPlay, 2000);
+                        });
+                    } else {
+                        // Manual with voice on: just speak, no auto-advance
+                        speak(step.voice || step.description);
+                    }
+                }
+                updateUI();
+            }
+        }
+
+        function doAutoPlay() {
+            if (!isAutoPlaying || currentStep >= simulationSteps.length - 1) {
+                stopAutoPlay();
+                return;
+            }
+            handleNextStep();
+            // Note: next doAutoPlay is scheduled inside handleNextStep via speak onend
+        }
+
+        function fullReset() {
+            speechSynthesis.cancel();
+            stopAutoPlay();
+            stopTour();
+            hideAllGuideArrows();
+            guideArrowsShown = false;
+            isVoiceOn = false;
+            voiceBtn.classList.remove('btn-voice-on');
+            currentStep = 0;
+            simulationSteps = [];
+            packetGroup.visible = false;
+            packetLabel.visible = false;
+            clearTrail();
+            webServer.visible = false;
+            webServer.userData.label.visible = false;
+            setStatus('idle', 'Idle');
+            websiteOverlay.classList.add('hidden');
+            simContainer.classList.add('hidden');
+            terminalEl.innerHTML = '';
+            terminalEl.classList.add('hidden');
+            setControlsDisabled(true);
+            domainInput.value = '';
+            if (currentMode === 'basic') {
+                activateMode('basic');
+            } else {
+                searchContainer.classList.remove('hidden');
+                basicIntro.classList.add('hidden');
+            }
+            gsap.to(controls.target, { x: 0, y: 0, z: 0, duration: 1 });
+            gsap.to(camera.position, { x: 0, y: 8, z: currentMode === 'basic' ? 22 : 30, duration: 1 });
+        }
+
+        // ============================================================
+        //  EVENT LISTENERS
+        // ============================================================
+        setControlsDisabled(true);
+
+        // Disclaimer
+        window.addEventListener('load', function() {
+            gsap.to('#disclaimer-box', { scale: 1, opacity: 1, duration: 0.5, ease: 'back.out(1.4)', delay: 0.2 });
+        });
+
+        enterBtn.addEventListener('click', function() {
+            gsap.to('#disclaimer-overlay', {
+                opacity: 0, duration: 0.5,
+                onComplete: function() {
+                    disclaimerOverlay.classList.add('hidden');
+                    modeOverlay.classList.remove('hidden');
+                    gsap.to(modeBox, { scale: 1, opacity: 1, duration: 0.5, ease: 'back.out(1.4)', delay: 0.1 });
+                }
+            });
+        });
+
+        // Mode selection
+        modeBasicBtn.addEventListener('click', function() {
+            gsap.to(modeOverlay, {
+                opacity: 0, duration: 0.4,
+                onComplete: function() {
+                    modeOverlay.classList.add('hidden');
+                    activateMode('basic');
+                    setTimeout(function() {
+                        showGuideArrow(gaTourEl, 'tour-btn', 'down');
+                        showSimulationGuideArrows();
+                    }, 500);
+                }
+            });
+        });
+
+        modeAdvBtn.addEventListener('click', function() {
+            gsap.to(modeOverlay, {
+                opacity: 0, duration: 0.4,
+                onComplete: function() {
+                    modeOverlay.classList.add('hidden');
+                    activateMode('advanced');
+                    setTimeout(function() {
+                        showGuideArrow(gaTourEl, 'tour-btn', 'down');
+                    }, 500);
+                }
+            });
+        });
+
+        // Switch mode - directly toggles between basic and advanced
+        switchBtn.addEventListener('click', function() {
+            hideAllGuideArrows();
+            guideArrowsShown = false;
+            stopTour();
+            speechSynthesis.cancel();
+            stopAutoPlay();
+            isVoiceOn = false;
+            voiceBtn.classList.remove('btn-voice-on');
+            currentStep = 0;
+            simulationSteps = [];
+            packetGroup.visible = false;
+            packetLabel.visible = false;
+            clearTrail();
+            terminalEl.innerHTML = '';
+            terminalEl.classList.add('hidden');
+            websiteOverlay.classList.add('hidden');
+            // Toggle mode directly
+            if (currentMode === 'basic') {
+                activateMode('advanced');
+            } else {
+                activateMode('basic');
+            }
+            setTimeout(function() {
+                showGuideArrow(gaTourEl, 'tour-btn', 'down');
+                if (currentMode === 'basic') showSimulationGuideArrows();
+            }, 500);
+        });
+
+        // Tour
+        tourBtn.addEventListener('click', function() {
+            hideGuideArrow(gaTourEl, 'tour-btn');
+            startTour();
+        });
+
+        // About
+        aboutBtn.addEventListener('click', function() {
+            stopTour();
+            hideAllGuideArrows();
+            aboutOverlay.classList.remove('hidden');
+        });
+        closeAboutBtn.addEventListener('click', function() { aboutOverlay.classList.add('hidden'); });
+
+        // Search (advanced)
+        searchBtn.addEventListener('click', function() {
+            hideGuideArrow(gaTourEl, 'tour-btn');
+            startAdvancedSimulation();
+            showSimulationGuideArrows();
+        });
+        domainInput.addEventListener('keydown', function(e) {
+            if (e.key === 'Enter') {
+                hideGuideArrow(gaTourEl, 'tour-btn');
+                startAdvancedSimulation();
+                showSimulationGuideArrows();
+            }
+        });
+
+        // Website overlay
+        closeWebBtn.addEventListener('click', function() { websiteOverlay.classList.add('hidden'); });
+        resetWebBtn.addEventListener('click', function() { hideAllGuideArrows(); guideArrowsShown = false; fullReset(); });
+
+        // Navigation
+        prevBtn.addEventListener('click', function() {
+            if (currentStep > 0) {
+                currentStep--;
+                var step = simulationSteps[currentStep];
+                if (isVoiceOn || isAutoPlaying) {
+                    focusCamera(step.focusTarget);
+                    speak(step.voice || step.description);
+                }
+                updateUI();
+            }
+        });
+
+        nextBtn.addEventListener('click', function() {
+            hideGuideArrow(gaNextEl, 'next-btn');
+            hideGuideArrow(gaAutoEl, 'autoplay-btn');
+            handleNextStep();
+        });
+
+        restartBtn.addEventListener('click', function() {
+            hideAllGuideArrows();
+            guideArrowsShown = false;
+            fullReset();
+        });
+
+        // Voice
+        voiceBtn.addEventListener('click', function() {
+            isVoiceOn = !isVoiceOn;
+            voiceBtn.classList.toggle('btn-voice-on', isVoiceOn);
+            if (isVoiceOn && simulationSteps.length) {
+                focusCamera(simulationSteps[currentStep].focusTarget);
+                speak(simulationSteps[currentStep].voice || simulationSteps[currentStep].description);
+            } else {
+                speechSynthesis.cancel();
+            }
+        });
+
+        // Auto-play
+        autoplayBtn.addEventListener('click', function() {
+            hideGuideArrow(gaNextEl, 'next-btn');
+            hideGuideArrow(gaAutoEl, 'autoplay-btn');
+            isAutoPlaying = !isAutoPlaying;
+            if (isAutoPlaying) {
+                isVoiceOn = true;
+                voiceBtn.classList.add('btn-voice-on');
+                // Speak current step first, then wait for voice to end before advancing
+                if (simulationSteps.length) {
+                    focusCamera(simulationSteps[currentStep].focusTarget);
+                    speak(simulationSteps[currentStep].voice || simulationSteps[currentStep].description, function() {
+                        // Voice finished speaking current step, now advance
+                        autoPlayTimer = setTimeout(doAutoPlay, 2000);
+                    });
+                }
+            } else {
+                stopAutoPlay();
+            }
+            updateUI();
+        });
+
+        // Cleanup - stop voice when leaving page, switching tabs, or closing
+        window.addEventListener('pagehide', function() {
+            speechSynthesis.cancel();
+            hideAllGuideArrows();
+            fullReset();
+        });
+
+        // Stop voice when tab becomes hidden (user switches tab)
+        document.addEventListener('visibilitychange', function() {
+            if (document.hidden) {
+                speechSynthesis.cancel();
+                if (isAutoPlaying) stopAutoPlay();
+            }
+        });
+
+        // Stop voice on page unload
+        window.addEventListener('beforeunload', function() {
+            speechSynthesis.cancel();
+        });
+
+        // ============================================================
+        //  RENDER LOOP
+        // ============================================================
+        var clock = new THREE.Clock();
+
+        function animate() {
+            requestAnimationFrame(animate);
+            var elapsed = clock.getElapsedTime();
+            controls.update();
+
+            // Animate particles
+            var positions = particleSystem.geometry.attributes.position.array;
+            for (var i = 0; i < particleCount; i++) {
+                positions[i * 3 + 1] += Math.sin(elapsed + i) * 0.002;
+            }
+            particleSystem.geometry.attributes.position.needsUpdate = true;
+
+            // Blink LEDs
+            [clientServer, resolverServer, rootServer, tldServer, authServer, webServer].forEach(function(server) {
+                if (!server.visible) return;
+                server.children.forEach(function(child) {
+                    if (child.userData.isLed && Math.random() < 0.005) {
+                        child.material.opacity = child.userData.baseOpacity * (0.3 + Math.random() * 0.7);
+                    }
+                });
+            });
+
+            // Rotate packet
+            if (packetGroup.visible) {
+                envelopeMesh.rotation.y += 0.04;
+                glowSphere.scale.setScalar(0.9 + Math.sin(elapsed * 4) * 0.15);
+            }
+
+            renderer.render(scene, camera);
+        }
+
+        window.addEventListener('resize', function() {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        });
+
+        // Hide all objects initially - mode selector will show the right ones
+        hideObjects(basicObjects);
+        hideObjects(advancedObjects);
+
+        // Start render loop
+        animate();
+    </script>
+</body>
+</html>

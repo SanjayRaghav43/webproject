@@ -1,0 +1,172 @@
+
+
+<!-- FLOATING CONTACT BUTTON -->
+<button class="contact-fab" id="contactFab" aria-label="Contact us">
+  <span class="fab-icon">
+    <svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>
+  </span>
+  <span class="fab-label">Contact us</span>
+</button>
+
+<!-- CONTACT POPUP OVERLAY -->
+<div class="contact-overlay" id="contactOverlay">
+  <div class="contact-popup">
+
+    <!-- Close button -->
+    <button class="contact-close" id="contactClose" aria-label="Close">
+      <svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+    </button>
+
+    <!-- Form -->
+    <form class="contact-form" id="contactForm">
+
+      <!-- Salutation — CUSTOM DROPDOWN (NO native <select>) -->
+      <div class="cf-field cf-custom-dropdown" data-name="salutation" data-required="true">
+        <label>Salutation*</label>
+        <div class="cf-dd-display">
+          <span class="cf-dd-text">Ms.</span>
+          <svg class="cf-dd-arrow" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="#00838f" stroke-width="2.5" stroke-linecap="round">
+            <polyline points="6 9 12 15 18 9"/>
+          </svg>
+        </div>
+        <input type="hidden" name="salutation" value="Ms.">
+        <ul class="cf-dd-options">
+          <li data-value="Ms." class="selected">Ms.</li>
+          <li data-value="Mr.">Mr.</li>
+          <li data-value="Other">Other</li>
+        </ul>
+      </div>
+
+      <div class="cf-field">
+        <label for="cfCity">City/Town</label>
+        <input type="text" id="cfCity" name="city">
+      </div>
+
+      <div class="cf-field">
+        <label for="cfFirstName">First name</label>
+        <input type="text" id="cfFirstName" name="firstName">
+      </div>
+
+      <div class="cf-field">
+        <label for="cfZip">ZIP code</label>
+        <input type="text" id="cfZip" name="zip">
+      </div>
+
+      <div class="cf-field">
+        <label for="cfSurname">Surname*</label>
+        <input type="text" id="cfSurname" name="surname" required>
+      </div>
+
+
+      <div class="cf-field cf-custom-dropdown cf-searchable" data-name="industry" data-required="true">
+        <label>Industry*</label>
+        <div class="cf-dd-display">
+          <span class="cf-dd-text placeholder">Select an industry</span>
+          <svg class="cf-dd-arrow" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="#00838f" stroke-width="2.5" stroke-linecap="round">
+            <polyline points="6 9 12 15 18 9"/>
+          </svg>
+        </div>
+        <input type="hidden" name="industry" value="">
+        <div class="cf-dd-panel">
+          <div class="cf-dd-search-wrap">
+            <input type="text" class="cf-dd-search" placeholder="">
+            <svg class="cf-dd-search-icon" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="#999" stroke-width="2" stroke-linecap="round">
+              <circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+            </svg>
+          </div>
+          <ul class="cf-dd-options">
+            <li data-value="Animal feed">Animal feed</li>
+            <li data-value="Architectural and automotive glass coating">Architectural and automotive glass coating</li>
+            <li data-value="Automotive">Automotive</li>
+            <li data-value="Battery">Battery</li>
+            <li data-value="Chemicals">Chemicals</li>
+            <li data-value="Chocolate & Coffee">Chocolate & Coffee</li>
+            <li data-value="Consumer Foods">Consumer Foods</li>
+            <li data-value="Dairy">Dairy</li>
+            <li data-value="Die Casting">Die Casting</li>
+            <li data-value="Digital Info">Digital Info</li>
+            <li data-value="Electronic Materials">Electronic Materials</li>
+            <li data-value="Energy">Energy</li>
+            <li data-value="Extrusion Solution">Extrusion Solution</li>
+            <li data-value="Food & Feed">Food & Feed</li>
+            <li data-value="Advanced Materials">Advanced Materials</li>
+            <li data-value="Other">Other</li>
+          </ul>
+        </div>
+        <small class="cf-industry-hint">Please select to which industry your inquiry pertains.</small>
+      </div>
+
+      <div class="cf-field">
+        <label for="cfCompany">Company name*</label>
+        <input type="text" id="cfCompany" name="company" required>
+      </div>
+
+      <!-- Message -->
+      <div class="cf-field full-width" style="grid-column:2/3; grid-row: span 2;">
+        <label for="cfMessage">Message*</label>
+        <textarea id="cfMessage" name="message" required placeholder="Your message..."></textarea>
+      </div>
+
+      <div class="cf-field">
+        <label for="cfEmail">E-mail address*</label>
+        <input type="email" id="cfEmail" name="email" required>
+      </div>
+
+      <div class="cf-field">
+        <label for="cfPhone">Telephone number</label>
+        <input type="tel" id="cfPhone" name="phone">
+      </div>
+
+      <!-- Location/Region — CUSTOM SEARCHABLE DROPDOWN -->
+      <div class="cf-field cf-custom-dropdown cf-searchable" data-name="region" data-required="true">
+        <label>Location/Region*</label>
+        <div class="cf-dd-display">
+          <span class="cf-dd-text placeholder">Select your Location/Region</span>
+          <svg class="cf-dd-arrow" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="#00838f" stroke-width="2.5" stroke-linecap="round">
+            <polyline points="6 9 12 15 18 9"/>
+          </svg>
+        </div>
+        <input type="hidden" name="region" value="">
+        <div class="cf-dd-panel">
+          <div class="cf-dd-search-wrap">
+            <input type="text" class="cf-dd-search" placeholder="">
+            <svg class="cf-dd-search-icon" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="#999" stroke-width="2" stroke-linecap="round">
+              <circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+            </svg>
+          </div>
+          <ul class="cf-dd-options">
+            <li data-value="Europe">Europe</li>
+            <li data-value="North America">North America</li>
+            <li data-value="South America">South America</li>
+            <li data-value="Asia Pacific">Asia Pacific</li>
+            <li data-value="Middle East & Africa">Middle East & Africa</li>
+            <li data-value="India">India</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- Submit row -->
+      <div class="cf-submit-row">
+        <button type="submit" class="cf-send">SEND</button>
+        <div class="cf-privacy">
+          <input type="checkbox" id="cfPrivacy" name="privacy">
+          <span>
+            I agree to the privacy policy.<br>
+            <a href="#" target="_blank">Bühler Privacy Policy</a>
+          </span>
+        </div>
+      </div>
+
+      <div class="cf-field">
+        <label for="cfStreet">Street</label>
+        <input type="text" id="cfStreet" name="street">
+      </div>
+
+      <div class="cf-field">
+        <label for="cfHouse">House number</label>
+        <input type="text" id="cfHouse" name="houseNumber">
+      </div>
+
+    </form>
+  </div>
+</div>

@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+
+
+.navbar {
+  background: linear-gradient(to right, #003b5c, #00a6a6, #a8d400);
+
+  padding:20px;
+
+  display:flex;
+  align-items:center;
+}
+
+
+
+.dropdown {
+  position: relative;
+  display: inline-block;
+}
+
+.dropbtn {
+  background: transparent;
+  color: white;
+  padding: 12px 20px;
+  font-size: 20px;
+  border: none;
+  border-radius: 8px;
+  margin-left:40px;
+  cursor: pointer;
+
+  transition:0.3s;
+}
+
+.dropdown-content {
+  display: none;
+  position: absolute;
+  background: white;
+  min-width: 250px;
+  box-shadow: 0px 4px 10px rgba(0,0,0,0.2);
+  padding: 15px;
+}
+
+
+.dropdown-content a {
+  display: block;
+  color: #00334d;
+  padding: 10px;
+  text-decoration: none;
+  font-size: 18px;
+}
+
+
+.dropdown-content a:hover {
+  background: #f2f2f2;
+}
+
+
+.dropdown:hover .dropdown-content {
+  display: block;
+}
+
+.dropbtn:hover{
+   background:#2f5f7a;
+}
+
+
+.hero{
+  height:400px;
+
+  background: linear-gradient(to right, #004d66, #00a6a6, #8ccf2f);
+
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+  align-items:center;
+}
+
+
+.hero h1{
+  color:white;
+  font-size:70px;
+  margin-bottom:40px;
+}
+
+.search-box{
+  width:800px;
+  background:white;
+
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+
+  padding:20px;
+
+  border-radius:10px;
+
+  box-shadow:0px 5px 10px rgba(0,0,0,0.3);
+}
+
+
+.search-box input{
+  width:100%;
+  border:none;
+  outline:none;
+  font-size:28px;
+}
+
+
+.icon{
+  font-size:35px;
+  color:#00a6a6;
+}
+
+.cards{
+   display:flex;
+   gap:40px;
+   margin-top:120px;
+   justify-content:center;
+}
+
+
+
+.right-menu{
+   display:flex;
+   align-items:center;
+   gap:30px;
+
+   color:white;
+   font-size:22px;
+
+   margin-left:auto;
+}
+/* CARD SECTION */
+
+.cards-container{
+  display:flex;
+  justify-content:center;
+  gap:40px;
+  margin-top:-80px;
+  padding:40px;
+  flex-wrap:wrap;
+}
+
+.card{
+  width:350px;
+  background:white;
+  border-radius:20px;
+  overflow:hidden;
+
+  box-shadow:0px 5px 15px rgba(0,0,0,0.2);
+
+  transition:0.4s;
+  cursor:pointer;
+}
+
+.card img{
+  width:100%;
+  height:220px;
+  object-fit:cover;
+
+  transition:0.5s;
+}
+
+/* HOVER EFFECT */
+
+.card:hover{
+  transform:translateY(-10px) scale(1.03);
+  box-shadow:0px 15px 25px rgba(0,0,0,0.3);
+}
+
+.card:hover img{
+  transform:scale(1.1);
+}
+
+.card-content{
+  padding:25px;
+}
+
+.card-content h2{
+  color:#003b5c;
+  font-size:30px;
+  margin-bottom:15px;
+}
+
+.card-content p{
+  color:#333;
+  font-size:18px;
+  line-height:1.5;
+}
+</style>
+</head>
+<body>
+
+<div class="navbar">
+<a href="4.html">
+
+   <img src="Log.svg" alt="logo" height="20">
+
+</a>
+
+  <div class="dropdown">
+    <button class="dropbtn">Solutions</button>
+
+    <div class="dropdown-content">
+      <a href="#">Dairy</a>
+      <a href="#">Nuts</a>
+      <a href="#">Pet Food</a>
+      <a href="#">Rice & Paddy</a>
+      <a href="#">Wheat & Grain</a>
+    </div>
+  </div>
+
+  <div class="dropdown">
+<button class = "dropbtn">Services</button>
+  <div class="dropdown-content">
+    <a href="#">maintance</a>
+    <a herf="#">24/7</a>
+    <a herf="#">custumer care</a>
+    <a herf="#">upgrades</a>
+  </div>
+</div>
+
+<div class="dropdown">
+<button class = "dropbtn">Inspiration</button>
+  <div class="dropdown-content">
+    <a href="#">Mobility</a>
+    <a herf="#">Food Safty</a>
+    <a herf="#">Climate Protection</a>
+    <a herf="#">upgrades</a>
+  </div>
+</div>
+
+<div class="dropdown">
+<button class = "dropbtn">News</button>
+  <div class="dropdown-content">
+    <a href="#">Media</a>
+    <a herf="#">Anual Report 2025</a>
+    <a herf="#">Inspiration hub</a>
+    <a herf="#">Publications</a>
+  </div>
+</div>
+
+<div class="dropdown">
+<button class = "dropbtn">Careers</button>
+  <div class="dropdown-content">
+    <a href="#">Media</a>
+    <a herf="#">Anual Report 2025</a>
+    <a herf="#">Inspiration hub</a>
+    <a herf="#">Publications</a>
+  </div>
+</div>
+
+<div class="dropdown">
+<button class = "dropbtn">About Us</button>
+  <div class="dropdown-content">
+    <a href="#">about us</a>
+    <a herf="#">Contact Us</a>
+    <a herf="#">Channel Patners</a>
+    <a herf="#">our organization</a>
+  </div>
+</div>
+<div class="right-menu">
+
+   <span>🔍</span>
+
+   <span>EN ▼</span>
+
+   <span>myBühler ↗</span>
+
+</div>
+</div>
+<div class="hero">
+
+  <h1>Innovations for a better world</h1>
+
+  <div class="search-box">
+  
+
+    <input type="text" placeholder="I am interested in...">
+
+    <div class="icon">🔍</div>
+
+    </div>
+</div>
+
+
+
+
+    <!-- IMAGE CARDS -->
+
+<div class="cards-container">
+
+  <!-- CARD 1 -->
+
+  <div class="card">
+
+    <img src="image1.jpeg" alt="machine">
+
+    <div class="card-content">
+      <h2>Chocolate Processing</h2>
+
+      <p>
+        Bühler presents new editions of two icons in
+        chocolate mass processing.
+      </p>
+    </div>
+
+  </div>
+
+  <!-- CARD 2 -->
+
+  <div class="card">
+
+    <img src="image2.jpeg" alt="machine">
+
+    <div class="card-content">
+      <h2>Food Innovation</h2>
+
+      <p>
+        Bühler launches innovations and major upgrades
+        to grains and food systems.
+      </p>
+    </div>
+
+  </div>
+
+  <!-- CARD 3 -->
+
+  <div class="card">
+
+    <img src="image3.jpeg" alt="machine">
+
+    <div class="card-content">
+      <h2>Extrusion Systems</h2>
+
+      <p>
+        Bühler ushers in a new era of extrusion systems
+        with Nutrex 7 Series.
+      </p>
+    </div>
+
+  </div>
+
+</div>
+
+</body>
+</html>

@@ -1,0 +1,429 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Bühler Group</title>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: 'Segoe UI', sans-serif; background: #f0f2f5; }
+
+/* NAVBAR */
+.navbar {
+  background: linear-gradient(135deg, #003b5c 0%, #00838f 40%, #7cb342 100%);
+  padding: 0 28px; display: flex; align-items: center;
+  justify-content: space-between; height: 64px; position: sticky; top: 0; z-index: 100;
+}
+.navbar-logo { text-decoration: none; flex-shrink: 0; }
+.navbar-logo img { height: 36px; display: block; }
+.navbar-logo span { color: #fff; font-size: 22px; font-weight: 700; }
+
+/* NAV LINKS */
+.nav-menu { display: flex; list-style: none; gap: 4px; flex: 1; justify-content: center; }
+.nav-menu a {
+  color: #fff; text-decoration: none; font-size: 15px; padding: 8px 14px;
+  border-radius: 6px; transition: background .2s;
+}
+.nav-menu a:hover { background: rgba(255,255,255,.18); }
+
+/* DROPDOWN */
+.nav-item { position: relative; }
+.dropdown-panel {
+  position: fixed; top: 64px; left: 0; right: 0; background: #fff;
+  box-shadow: 0 8px 30px rgba(0,0,0,.1); opacity: 0; visibility: hidden;
+  transform: translateY(-6px); transition: all .25s; z-index: 99; max-height: 80vh; overflow-y: auto;
+}
+.nav-item:hover .dropdown-panel { opacity: 1; visibility: visible; transform: translateY(0); }
+.dropdown-inner { max-width: 1100px; margin: auto; padding: 32px 40px; display: flex; gap: 36px; }
+.dropdown-section { flex: 0 0 auto; }
+.dropdown-title { font-size: 11px; font-weight: 700; color: #003b5c; text-transform: uppercase; letter-spacing: .8px; margin-bottom: 14px; }
+.dropdown-cols { display: flex; gap: 40px; }
+.dropdown-col { display: flex; flex-direction: column; gap: 10px; min-width: 150px; }
+.dropdown-col a { font-size: 14px; color: #444; text-decoration: none; transition: color .2s; }
+.dropdown-col a:hover { color: #00838f; }
+.dropdown-col a.bold { font-weight: 600; }
+.dropdown-divider { width: 1px; background: #e5e5e5; }
+.dropdown-highlights { flex: 1; }
+.dropdown-highlights h4 { font-size: 15px; color: #003b5c; margin-bottom: 14px; }
+.hl-grid { display: flex; gap: 14px; }
+.hl-card {
+  flex: 1; border-radius: 10px; overflow: hidden; border: 1px solid #eee;
+  text-decoration: none; transition: transform .2s, box-shadow .2s;
+}
+.hl-card:hover { transform: translateY(-3px); box-shadow: 0 6px 20px rgba(0,0,0,.1); }
+.hl-card img { width: 100%; height: 120px; object-fit: cover; display: block; }
+.hl-card p { padding: 10px 12px; font-size: 13px; color: #333; }
+
+/* RIGHT NAV */
+.nav-right { display: flex; align-items: center; gap: 8px; flex-shrink: 0; }
+
+/* Search — always visible, no animation */
+.search-wrap {
+  display: flex; align-items: center; background: rgba(255,255,255,.15);
+  border-radius: 6px; padding: 0 10px; height: 34px; gap: 6px;
+}
+.search-wrap svg {
+  width: 16px; height: 16px; stroke: rgba(255,255,255,.7); fill: none;
+  stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round; flex-shrink: 0;
+}
+.search-wrap input {
+  width: 150px; height: 34px; border: none; background: transparent;
+  color: #fff; font-size: 13px; outline: none;
+}
+.search-wrap input::placeholder { color: rgba(255,255,255,.5); }
+
+/* Language */
+.lang-wrap { position: relative; }
+.lang-btn {
+  height: 34px; padding: 0 8px; border: none; background: none; cursor: pointer;
+  color: #fff; font-size: 14px; display: flex; align-items: center; gap: 3px;
+  border-radius: 4px; transition: background .2s;
+}
+.lang-btn:hover { background: rgba(255,255,255,.18); }
+.lang-btn svg { width: 13px; height: 13px; stroke: #fff; fill: none; stroke-width: 2.5; transition: transform .2s; }
+.lang-wrap.open .lang-btn svg { transform: rotate(180deg); }
+.lang-list {
+  position: absolute; top: calc(100% + 8px); right: 0; background: #fff;
+  border-radius: 8px; box-shadow: 0 8px 24px rgba(0,0,0,.14); min-width: 160px;
+  opacity: 0; visibility: hidden; transform: translateY(-4px); transition: all .2s; z-index: 200;
+}
+.lang-wrap.open .lang-list { opacity: 1; visibility: visible; transform: translateY(0); }
+.lang-list a { display: block; padding: 9px 14px; font-size: 13px; color: #333; text-decoration: none; }
+.lang-list a:hover { background: #f5f5f5; }
+.lang-list a.active { color: #00838f; font-weight: 600; }
+
+/* myBühler */
+.mybuhler {
+  display: flex; align-items: center; gap: 5px; color: #fff; text-decoration: none;
+  font-size: 14px; padding: 6px 14px; border: 1.5px solid rgba(255,255,255,.6);
+  border-radius: 20px; white-space: nowrap; transition: all .3s;
+  max-width: 130px; overflow: hidden;
+}
+.mybuhler:hover { background: rgba(255,255,255,.18); border-color: #fff; }
+.mybuhler svg { width: 13px; height: 13px; stroke: #fff; fill: none; stroke-width: 2; flex-shrink: 0; }
+
+/* HERO */
+.hero {
+  height: 380px;
+  background: linear-gradient(135deg, #004d66 0%, #00838f 45%, #8bc34a 100%);
+  display: flex; flex-direction: column; justify-content: center; align-items: center; gap: 32px;
+}
+.hero h1 { color: #fff; font-size: 48px; font-weight: 700; text-align: center; font-style: italic; }
+.hero-search {
+  width: 90%; max-width: 700px; background: #fff; display: flex; align-items: center;
+  padding: 14px 22px; border-radius: 10px; box-shadow: 0 4px 20px rgba(0,0,0,.2);
+}
+.hero-search input { flex: 1; border: none; outline: none; font-size: 20px; color: #333; }
+.hero-search span { font-size: 24px; color: #00838f; }
+
+/* CAROUSEL */
+.carousel-section {
+  max-width: 1200px; margin: -50px auto 60px; padding: 0 20px; position: relative;
+}
+.carousel-track-wrapper { overflow: hidden; border-radius: 16px; }
+.carousel-track {
+  display: flex; transition: transform .45s ease;
+}
+.carousel-card {
+  min-width: calc(100% / 3); padding: 10px;
+}
+.carousel-card-inner {
+  background: #fff; border-radius: 16px; overflow: hidden;
+  box-shadow: 0 4px 16px rgba(0,0,0,.1); transition: transform .3s, box-shadow .3s;
+  cursor: pointer;
+}
+.carousel-card-inner:hover { transform: translateY(-6px); box-shadow: 0 12px 28px rgba(0,0,0,.18); }
+.carousel-card-inner img { width: 100%; height: 220px; object-fit: cover; display: block; }
+.carousel-card-inner p { padding: 18px 20px; font-size: 15px; color: #333; line-height: 1.5; }
+
+/* Arrows */
+.arrow {
+  position: absolute; top: 50%; transform: translateY(-50%); width: 48px; height: 48px;
+  border: 2.5px solid #e89a1d; border-radius: 50%; background: #fff;
+  cursor: pointer; display: flex; align-items: center; justify-content: center;
+  transition: all .2s; z-index: 10;
+}
+.arrow:hover { background: #e89a1d; }
+.arrow:hover svg { stroke: #fff; }
+.arrow svg { width: 22px; height: 22px; stroke: #e89a1d; fill: none; stroke-width: 2.5; stroke-linecap: round; stroke-linejoin: round; }
+.arrow-left { left: -10px; }
+.arrow-right { right: -10px; }
+</style>
+</head>
+<body>
+
+<!-- NAVBAR -->
+<nav class="navbar">
+  <a href="#" class="navbar-logo">
+    <img src="Logo.svg" alt="Bühler"
+      onerror="this.style.display='none'; this.parentElement.innerHTML='<span>◄ BÜHLER</span>'">
+  </a>
+
+  <ul class="nav-menu">
+    <li class="nav-item"><a href="#">Solutions</a>
+      <div class="dropdown-panel"><div class="dropdown-inner">
+        <div class="dropdown-section">
+          <div class="dropdown-title">Food, feed &amp; confectionery</div>
+          <div class="dropdown-cols">
+            <div class="dropdown-col">
+              <a href="#">Alternative proteins</a><a href="#">Animal feed</a><a href="#">Aqua feed</a>
+              <a href="#">Baked goods</a><a href="#">Biomass</a><a href="#">Breakfast cereals</a>
+              <a href="#">Cocoa &amp; chocolate</a><a href="#">Coffee</a><a href="#">Confectionery</a>
+            </div>
+            <div class="dropdown-col">
+              <a href="#">Dairy</a><a href="#">Dried fruits</a><a href="#">Insect technology</a>
+              <a href="#">Nuts</a><a href="#">Pasta</a><a href="#">Pet food</a>
+              <a href="#">Pulses &amp; spices</a><a href="#">Rice &amp; paddy</a><a href="#">Wheat &amp; grain</a>
+            </div>
+          </div>
+        </div>
+        <div class="dropdown-divider"></div>
+        <div class="dropdown-section">
+          <div class="dropdown-title">Advanced materials</div>
+          <div class="dropdown-cols">
+            <div class="dropdown-col">
+              <a href="#" class="bold">Batteries</a><a href="#" class="bold">Grinding &amp; Dispersing</a>
+              <a href="#">Chemicals</a><a href="#">Digital inks</a><a href="#">Paints &amp; coatings</a>
+            </div>
+            <div class="dropdown-col">
+              <a href="#" class="bold">Leybold Optics</a><a href="#">Glass coating</a>
+              <a href="#">Flexible electronics</a><a href="#">Semiconductors</a><a href="#" class="bold">Die casting</a>
+            </div>
+          </div>
+        </div>
+      </div></div>
+    </li>
+
+    <li class="nav-item"><a href="#">Services</a>
+      <div class="dropdown-panel"><div class="dropdown-inner">
+        <div class="dropdown-section">
+          <div class="dropdown-cols">
+            <div class="dropdown-col">
+              <a href="#">Maintenance</a><a href="#">Expert services</a><a href="#">Hardware</a><a href="#">Installation</a>
+            </div>
+            <div class="dropdown-col">
+              <a href="#">Knowledge services</a><a href="#">Process Optimization</a><a href="#">Upgrades</a><a href="#">24/7 Hotline</a>
+            </div>
+          </div>
+        </div>
+        <div class="dropdown-divider"></div>
+        <div class="dropdown-highlights">
+          <h4>Highlights</h4>
+          <div class="hl-grid">
+            <a href="#" class="hl-card"><img src="https://dam.buhlergroup.com/rendition/f29b71a573e94f949daafe3d0af0ea8c/-FJPG-TwebTeaser_4x3" alt=""><p>Application &amp; Training Centers</p></a>
+            <a href="#" class="hl-card"><img src="https://dam.buhlergroup.com/rendition/02dd51653bc447ca8f94d02e0eee2992/-FJPG-TwebTeaser_4x3" alt=""><p>Services in general</p></a>
+            <a href="#" class="hl-card"><img src="https://dam.buhlergroup.com/rendition/0a4591a2a4f240d9a63a65b27dc4af5e/-FJPG-TwebTeaser_4x3" alt=""><p>Explore Digital Services</p></a>
+          </div>
+        </div>
+      </div></div>
+    </li>
+
+    <li class="nav-item"><a href="#">Inspiration</a>
+      <div class="dropdown-panel"><div class="dropdown-inner">
+        <div class="dropdown-section">
+          <div class="dropdown-cols">
+            <div class="dropdown-col">
+              <a href="#">Climate protection</a><a href="#">Digitalization</a><a href="#">Food safety</a><a href="#">Generation B</a>
+            </div>
+            <div class="dropdown-col">
+              <a href="#">Mobility</a><a href="#">Nutrition</a><a href="#">Resource efficiency</a><a href="#">Sustainability</a>
+            </div>
+          </div>
+        </div>
+        <div class="dropdown-divider"></div>
+        <div class="dropdown-highlights">
+          <h4>Highlights</h4>
+          <div class="hl-grid">
+            <a href="#" class="hl-card"><img src="https://dam.buhlergroup.com/rendition/6c08b1e609a943d2965f158751b45d1d/-FJPG-TwebTeaser_4x3" alt=""><p>What's your footprint?</p></a>
+            <a href="#" class="hl-card"><img src="https://dam.buhlergroup.com/rendition/1608979/-FJPG-TwebTeaser_4x3" alt=""><p>Lifelong Learning</p></a>
+            <a href="#" class="hl-card"><img src="https://dam.buhlergroup.com/rendition/79e406b762384e08a5c9e59968119f85/-FJPG-TwebTeaser_4x3" alt=""><p>Our sustainability goals</p></a>
+          </div>
+        </div>
+      </div></div>
+    </li>
+
+    <li class="nav-item"><a href="#">News</a>
+      <div class="dropdown-panel"><div class="dropdown-inner">
+        <div class="dropdown-section">
+          <div class="dropdown-cols">
+            <div class="dropdown-col">
+              <a href="#">Annual Report 2025</a><a href="#">Events &amp; Webinars</a><a href="#">Inspiration Hub</a>
+            </div>
+            <div class="dropdown-col">
+              <a href="#">Media corner</a><a href="#">Publications</a>
+            </div>
+          </div>
+        </div>
+        <div class="dropdown-divider"></div>
+        <div class="dropdown-highlights">
+          <h4>Highlights</h4>
+          <div class="hl-grid">
+            <a href="#" class="hl-card"><img src="https://dam.buhlergroup.com/rendition/1690749/-FJPG-TwebTeaser_4x3" alt=""><p>Networking Days 2025</p></a>
+            <a href="#" class="hl-card"><img src="https://dam.buhlergroup.com/rendition/1775932/-FJPG-TwebTeaser_4x3" alt=""><p>2025 Annual Report</p></a>
+            <a href="#" class="hl-card"><img src="https://dam.buhlergroup.com/rendition/1723767/-FJPG-TwebTeaser_4x3" alt=""><p>Diagram 191</p></a>
+          </div>
+        </div>
+      </div></div>
+    </li>
+
+    <li class="nav-item"><a href="#">Careers</a>
+      <div class="dropdown-panel"><div class="dropdown-inner">
+        <div class="dropdown-section">
+          <div class="dropdown-cols">
+            <div class="dropdown-col">
+              <a href="#" class="bold">Purpose &amp; Community</a><a href="#">About Bühler</a>
+              <a href="#">Our values</a><a href="#">Benefits</a><a href="#">Lifelong learning</a>
+            </div>
+            <div class="dropdown-col">
+              <a href="#">Diversity &amp; inclusion</a><a href="#">Application process</a>
+              <a href="#">Apprenticeship</a><a href="#">Early careers</a><a href="#">People stories</a>
+            </div>
+          </div>
+        </div>
+        <div class="dropdown-divider"></div>
+        <div class="dropdown-highlights">
+          <h4>Highlights</h4>
+          <div class="hl-grid">
+            <a href="#" class="hl-card"><img src="https://dam.buhlergroup.com/rendition/1637048/-FJPG-TwebTeaser_4x3" alt=""><p>See all jobs</p></a>
+            <a href="#" class="hl-card"><img src="https://dam.buhlergroup.com/rendition/1624517/-FJPG-TwebTeaser_4x3" alt=""><p>Locations</p></a>
+            <a href="#" class="hl-card"><img src="https://dam.buhlergroup.com/rendition/1622557/-FJPG-TwebTeaser_4x3" alt=""><p>Career Paths</p></a>
+          </div>
+        </div>
+      </div></div>
+    </li>
+
+    <li class="nav-item"><a href="#">About us</a>
+      <div class="dropdown-panel"><div class="dropdown-inner">
+        <div class="dropdown-section">
+          <div class="dropdown-cols">
+            <div class="dropdown-col">
+              <a href="#">About us</a><a href="#">Ad hoc announcements</a>
+              <a href="#">Channel partners</a><a href="#">Contact us</a><a href="#">Corporate Governance</a>
+            </div>
+            <div class="dropdown-col">
+              <a href="#">Corporate policies</a><a href="#">Our organization</a>
+              <a href="#">Startup collaborations</a><a href="#">Supplying to Bühler</a>
+            </div>
+          </div>
+        </div>
+        <div class="dropdown-divider"></div>
+        <div class="dropdown-highlights">
+          <h4>Highlights</h4>
+          <div class="hl-grid">
+            <a href="#" class="hl-card"><img src="https://dam.buhlergroup.com/rendition/8bde69e2749d4d88a55ecefdae9044db/-FJPG-TwebTeaser_4x3" alt=""><p>Our locations</p></a>
+            <a href="#" class="hl-card"><img src="https://dam.buhlergroup.com/rendition/78de131472144bb3a8bf49e1af042648/-FJPG-TwebTeaser_4x3" alt=""><p>Media corner</p></a>
+            <a href="#" class="hl-card"><img src="https://dam.buhlergroup.com/rendition/071e1f5c158e4264ac3e913c0a921833/-FJPG-TwebTeaser_4x3" alt=""><p>Contact us</p></a>
+          </div>
+        </div>
+      </div></div>
+    </li>
+  </ul>
+
+  <!-- RIGHT SIDE -->
+  <div class="nav-right">
+    <div class="search-wrap">
+      <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+      <input type="text" placeholder="Search...">
+    </div>
+
+    <div class="lang-wrap" id="langWrap">
+      <button class="lang-btn" id="langBtn">
+        <span id="langText">EN</span>
+        <svg viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg>
+      </button>
+      <div class="lang-list">
+        <a href="#" class="active" data-l="EN">🇬🇧 English</a>
+        <a href="#" data-l="DE">🇩🇪 Deutsch</a>
+        <a href="#" data-l="FR">🇫🇷 Français</a>
+        <a href="#" data-l="ZH">🇨🇳 中文</a>
+        <a href="#" data-l="JA">🇯🇵 日本語</a>
+        <a href="#" data-l="ES">🇪🇸 Español</a>
+      </div>
+    </div>
+
+    <a href="#" class="mybuhler" id="myBuhler">
+      myBühler
+      <svg viewBox="0 0 24 24"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+    </a>
+  </div>
+</nav>
+
+<!-- HERO -->
+<div class="hero">
+  <h1>Innovations for a better world</h1>
+  <div class="hero-search">
+    <input type="text" placeholder="I am interested in...">
+    <span>🔍</span>
+  </div>
+</div>
+
+<!-- CAROUSEL -->
+<div class="carousel-section">
+  <button class="arrow arrow-left" id="prevBtn">
+    <svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg>
+  </button>
+  <div class="carousel-track-wrapper">
+    <div class="carousel-track" id="track">
+      <div class="carousel-card"><div class="carousel-card-inner"><img src="image1.jpeg" alt="Chocolate"><p>Bühler presents new editions of two icons in chocolate mass processing.</p></div></div>
+      <div class="carousel-card"><div class="carousel-card-inner"><img src="image2.jpeg" alt="Food"><p>Bühler launches innovations and major upgrades to grains and food systems.</p></div></div>
+      <div class="carousel-card"><div class="carousel-card-inner"><img src="image3.jpeg" alt="Extrusion"><p>Bühler ushers in a new era of extrusion systems with Nutrex 7 Series.</p></div></div>
+      <div class="carousel-card"><div class="carousel-card-inner"><img src="image4.jpeg" alt="Market"><p>Bühler strengthens its market position.</p></div></div>
+      <div class="carousel-card"><div class="carousel-card-inner"><img src="image5.jpeg" alt="CEO"><p>Samuel Schär is the new CEO of Bühler Group</p></div></div>
+      <div class="carousel-card"><div class="carousel-card-inner"><img src="image6.jpeg" alt="Fermentation"><p>Pow.Bio and Bühler join forces to advance next-generation precision fermentation</p></div></div>
+    </div>
+  </div>
+  <button class="arrow arrow-right" id="nextBtn">
+    <svg viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg>
+  </button>
+</div>
+
+<script>
+
+/* LANGUAGE */
+const langWrap = document.getElementById('langWrap');
+const langBtn = document.getElementById('langBtn');
+const langText = document.getElementById('langText');
+langBtn.onclick = e => { e.stopPropagation(); langWrap.classList.toggle('open'); };
+langWrap.querySelectorAll('.lang-list a').forEach(a => {
+  a.onclick = e => {
+    e.preventDefault();
+    langWrap.querySelectorAll('a').forEach(x => x.classList.remove('active'));
+    a.classList.add('active');
+    langText.textContent = a.dataset.l;
+    langWrap.classList.remove('open');
+  };
+});
+document.addEventListener('click', () => langWrap.classList.remove('open'));
+
+/* CAROUSEL — infinite loop: 1,2,3,4,5,6,1,2,3... */
+const track = document.getElementById('track');
+const cards = [...track.children];
+const total = cards.length;
+let idx = 0;
+
+// Clone all cards for seamless looping
+cards.forEach(c => track.appendChild(c.cloneNode(true)));
+cards.forEach(c => track.insertBefore(c.cloneNode(true), track.firstChild));
+
+// Start at the real first card (after cloned set)
+idx = total;
+track.style.transition = 'none';
+track.style.transform = `translateX(-${idx * (100 / 3)}%)`;
+
+function slideTo(i, smooth = true) {
+  idx = i;
+  track.style.transition = smooth ? 'transform .45s ease' : 'none';
+  track.style.transform = `translateX(-${idx * (100 / 3)}%)`;
+}
+
+track.addEventListener('transitionend', () => {
+  // Jump without animation when reaching cloned zones
+  if (idx >= total * 2) { idx -= total; slideTo(idx, false); }
+  if (idx < total) { idx += total; slideTo(idx, false); }
+});
+
+document.getElementById('nextBtn').onclick = () => slideTo(idx + 1);
+document.getElementById('prevBtn').onclick = () => slideTo(idx - 1);
+</script>
+</body>
+</html>

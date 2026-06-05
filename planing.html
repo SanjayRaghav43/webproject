@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html>
+     <head>
+    <title>moving</title>
+   
+    <style>
+        body{
+            background-color: darkblue;
+        }
+ .container{
+    display:grid;
+    background-color: antiquewhite;
+    grid-template-columns: 1fr 1fr 1fr 1fr;
+    gap: 10px;
+    width: fit-content;
+ }
+
+ .wrapper{
+    display:flex;
+    background-color: dimgrey;
+    flex-direction: column;
+    justify-content: center;
+ }
+.wrapper:hover {
+    transform: scale(1.1);
+}
+ .wrapper {
+    box-shadow: 0 4px 10px green;
+
+}
+.box {
+    overflow: auto;
+}
+.logo:hover {
+    transform: rotate(180deg);
+}
+
+ </style>
+   </head>
+        <body>
+            
+            
+            <div class="container">
+  <div>1</div>
+  <div>2</div>
+  <div>3</div>
+  <div>4</div>
+  <div>5</div>
+  <div>6</div>
+  <div>7</div>
+  <div>8</div>
+</div>
+
+<br>
+      <div class="wrapper">
+  <div>1</div>
+  <div>2</div>
+  <div>3</div>
+  <div>4</div>
+  <div>5</div>
+  <div>6</div>
+  <div>7</div>
+  <div>8</div>
+</div>
+<br>
+<div class="logo">
+<a href="#" class="logo">
+    <img src="Logo.svg" alt="Bühler" onerror="this.style.display='none';this.nextElementSibling.style.display='inline'">
+    <b style="display:none">◄ BÜHLER</b>
+  </a>
+</div>
+</body>
+
+</html>

@@ -1,0 +1,46 @@
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+}
+.navbar{
+    display:flex;
+    align-items: center;
+    position: fixed;
+    top:0;
+    left:0;
+    width: 100%;
+    background-color: darkgreen;
+    padding :15px 20px;
+    z-index: 1000;
+position: relative;
+    
+}
+
+.logo{
+     font-size: 26px;
+     font-weight: bold;
+    
+}
+.menu{
+    display: flex;
+    gap : 90px;
+   
+    top: auto;
+
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+
+.menu a{
+    text-decoration: none;
+    color: currentColor;
+    font-size: larger;
+
+}
+
+.menu a:hover{
+    color: yellowgreen;
+}

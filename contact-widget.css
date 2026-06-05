@@ -1,0 +1,474 @@
+.contact-fab {
+  position: fixed;
+  bottom: 32px;
+  right: 32px;
+  z-index: 9000;
+  display: flex;
+  align-items: center;
+  height: 60px;
+  border-radius: 30px;
+  background: #00838f;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.25);
+  transition: box-shadow 0.3s ease;
+  overflow: hidden;
+}
+
+.contact-fab:hover {
+  box-shadow: 0 6px 28px rgba(0, 131, 143, 0.45);
+}
+
+.fab-icon {
+  width: 60px;
+  height: 60px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.fab-icon svg {
+  width: 28px;
+  height: 28px;
+  fill: #fff;
+}
+
+.fab-label {
+  max-width: 0;
+  opacity: 0;
+  white-space: nowrap;
+  font-family: 'Segoe UI', sans-serif;
+  font-size: 16px;
+  font-weight: 600;
+  color: #fff;
+  padding-right: 0;
+  transition: max-width 0.35s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.25s ease, padding-right 0.35s ease;
+  overflow: hidden;
+}
+
+.contact-fab:hover .fab-label {
+  max-width: 160px;
+  opacity: 1;
+  padding-right: 24px;
+}
+
+/* ─── POPUP OVERLAY ─── */
+.contact-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  background: rgba(0, 0, 0, 0.4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.3s ease, visibility 0.3s ease;
+}
+
+.contact-overlay.open {
+  opacity: 1;
+  visibility: visible;
+}
+
+/* ─── POPUP CONTAINER ─── */
+.contact-popup {
+  background: #fff;
+  width: 90%;
+  max-width: 780px;
+  max-height: 90vh;
+  border-radius: 4px;
+  position: relative;
+  transform: translateY(20px) scale(0.97);
+  transition: transform 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.contact-overlay.open .contact-popup {
+  transform: translateY(0) scale(1);
+}
+
+/* Close button */
+.contact-close {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  padding: 16px 24px;
+  background: #fff;
+  border: none;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+.contact-close svg {
+  width: 24px;
+  height: 24px;
+  stroke: #00838f;
+  stroke-width: 2.5;
+  fill: none;
+  stroke-linecap: round;
+  transition: stroke 0.15s;
+}
+
+.contact-close:hover svg {
+  stroke: #005f6b;
+}
+
+/* ─── FORM LAYOUT ─── */
+.contact-form {
+  padding: 10px 40px 40px;
+  overflow-y: auto;
+  overflow-x: hidden;
+  flex: 1;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0 48px;
+}
+
+.contact-form::-webkit-scrollbar { width: 6px; }
+.contact-form::-webkit-scrollbar-track { background: #f0f0f0; }
+.contact-form::-webkit-scrollbar-thumb { background: #c0c8ce; border-radius: 4px; }
+
+/* Each field group */
+.cf-field {
+  display: flex;
+  flex-direction: column;
+  padding: 14px 0;
+  border-bottom: 1px solid #dce1e5;
+  position: relative;
+}
+
+.cf-field label {
+  font-family: 'Segoe UI', sans-serif;
+  font-size: 14px;
+  font-weight: 400;
+  color: #555;
+  margin-bottom: 6px;
+}
+
+.cf-field input,
+.cf-field textarea {
+  border: none;
+  outline: none;
+  font-family: Georgia, 'Times New Roman', serif;
+  font-size: 17px;
+  font-style: italic;
+  color: #222;
+  background: transparent;
+  padding: 4px 0;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.cf-field textarea {
+  border: 1px solid #dce1e5;
+  border-radius: 4px;
+  padding: 12px;
+  min-height: 110px;
+  resize: vertical;
+  font-style: normal;
+  font-family: 'Segoe UI', sans-serif;
+  font-size: 15px;
+}
+
+.cf-field textarea:focus {
+  border-color: #00838f;
+}
+
+.cf-field input::placeholder,
+.cf-field textarea::placeholder {
+  color: #bbb;
+}
+
+.cf-field.full-width {
+  grid-column: 1 / -1;
+  border-bottom: none;
+}
+
+/* ═══════════════════════════════════════
+   CUSTOM DROPDOWN (Salutation, Industry, Region)
+   ═══════════════════════════════════════ */
+.cf-custom-dropdown {
+  position: relative;
+}
+
+.cf-dd-display {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  cursor: pointer;
+  padding: 4px 0;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+.cf-dd-text {
+  font-family: Georgia, 'Times New Roman', serif;
+  font-size: 17px;
+  font-style: italic;
+  color: #222;
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  padding-right: 8px;
+}
+
+.cf-dd-arrow {
+  flex-shrink: 0;
+  transition: transform 0.2s ease;
+}
+
+.cf-custom-dropdown.open .cf-dd-arrow {
+  transform: rotate(180deg);
+}
+
+/* Default: hide dropdown panels */
+.cf-custom-dropdown .cf-dd-options,
+.cf-custom-dropdown .cf-dd-panel {
+  display: none;
+}
+
+/* Non-searchable (Salutation) — options list as popup */
+.cf-custom-dropdown:not(.cf-searchable) .cf-dd-options {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  background: #fff;
+  border: 1px solid #dce1e5;
+  border-radius: 4px;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.12);
+  z-index: 100;
+  margin: 4px 0 0 0;
+  padding: 4px 0;
+  list-style: none;
+  max-height: 220px;
+  overflow-y: auto;
+}
+
+.cf-custom-dropdown:not(.cf-searchable).open .cf-dd-options {
+  display: block;
+}
+
+/* Searchable (Industry, Region) — panel with search + options */
+.cf-custom-dropdown.cf-searchable .cf-dd-panel {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  background: #fff;
+  border: 1px solid #dce1e5;
+  border-radius: 4px;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.12);
+  z-index: 100;
+  margin-top: 4px;
+  overflow: hidden;
+}
+
+.cf-custom-dropdown.cf-searchable.open .cf-dd-panel {
+  display: block;
+}
+
+.cf-custom-dropdown.cf-searchable .cf-dd-panel .cf-dd-options {
+  display: block;
+  position: static;
+  border: none;
+  box-shadow: none;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  max-height: 180px;
+  overflow-y: auto;
+  border-radius: 0;
+}
+
+/* Options scrollbar */
+.cf-dd-options::-webkit-scrollbar { width: 6px; }
+.cf-dd-options::-webkit-scrollbar-track { background: #f5f5f5; }
+.cf-dd-options::-webkit-scrollbar-thumb { background: #c0c8ce; border-radius: 4px; }
+
+.cf-dd-options li {
+  padding: 12px 16px;
+  font-family: Georgia, 'Times New Roman', serif;
+  font-size: 16px;
+  font-style: italic;
+  color: #333;
+  cursor: pointer;
+  transition: background 0.12s;
+  line-height: 1.4;
+  list-style: none;
+}
+
+.cf-dd-options li:hover {
+  background: #f0f7f8;
+}
+
+.cf-dd-options li.selected {
+  font-weight: 700;
+  color: #222;
+}
+
+.cf-dd-options li.hidden {
+  display: none;
+}
+
+/* Search input */
+.cf-dd-search-wrap {
+  position: relative;
+  padding: 10px 12px;
+  border-bottom: 1px solid #eee;
+  background: #fff;
+}
+
+.cf-dd-search {
+  width: 100%;
+  border: 1px solid #dce1e5;
+  border-radius: 3px;
+  padding: 8px 32px 8px 10px;
+  font-family: 'Segoe UI', sans-serif;
+  font-size: 14px;
+  color: #333;
+  outline: none;
+  background: #fff;
+  box-sizing: border-box;
+  font-style: normal;
+}
+
+.cf-dd-search:focus {
+  border-color: #00838f;
+}
+
+.cf-dd-search-icon {
+  position: absolute;
+  right: 22px;
+  top: 50%;
+  transform: translateY(-50%);
+  pointer-events: none;
+}
+
+.cf-industry-hint {
+  color: #888;
+  font-size: 12px;
+  margin-top: 4px;
+  font-family: 'Segoe UI', sans-serif;
+}
+
+/* ─── SEND BUTTON ─── */
+.cf-submit-row {
+  grid-column: 2 / 3;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding-top: 8px;
+}
+
+.cf-send {
+  width: 100%;
+  padding: 16px;
+  background: #00838f;
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  font-family: 'Segoe UI', sans-serif;
+  font-size: 15px;
+  font-weight: 700;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.cf-send:hover {
+  background: #006d75;
+}
+
+.cf-privacy {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+}
+
+.cf-privacy input[type="checkbox"] {
+  width: 18px;
+  height: 18px;
+  margin-top: 2px;
+  accent-color: #00838f;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+.cf-privacy span {
+  font-size: 13px;
+  color: #555;
+  line-height: 1.5;
+}
+
+.cf-privacy a {
+  color: #00838f;
+  text-decoration: none;
+  font-weight: 600;
+}
+
+.cf-privacy a:hover {
+  text-decoration: underline;
+}
+
+/* ═══════════════════════════════════════
+   RESPONSIVE — MOBILE
+   ═══════════════════════════════════════ */
+@media (max-width: 768px) {
+  .contact-fab {
+    bottom: 20px;
+    right: 16px;
+    height: 52px;
+  }
+
+  .fab-icon {
+    width: 52px;
+    height: 52px;
+  }
+
+  .fab-icon svg {
+    width: 24px;
+    height: 24px;
+  }
+
+  .contact-popup {
+    width: 95%;
+    max-width: 95vw;
+    max-height: 85vh;
+  }
+
+  .contact-form {
+    grid-template-columns: 1fr;
+    padding: 10px 16px 30px;
+    gap: 0;
+  }
+
+  .cf-submit-row {
+    grid-column: 1;
+  }
+
+  .cf-field.full-width {
+    grid-column: 1 !important;
+  }
+
+  .cf-dd-text {
+    font-size: 16px;
+  }
+
+  .cf-dd-options li {
+    font-size: 15px;
+    padding: 12px 14px;
+  }
+
+  .cf-custom-dropdown:not(.cf-searchable) .cf-dd-options,
+  .cf-custom-dropdown.cf-searchable .cf-dd-panel {
+    max-height: 240px;
+  }
+}

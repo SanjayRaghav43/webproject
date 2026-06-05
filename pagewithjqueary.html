@@ -1,0 +1,484 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Bühler Group</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Serif:ital,wght@0,400;0,700;1,400&family=Roboto:wght@300;400;500;700&family=Noto+Sans:wght@400;500;600;700&display=swap" rel="stylesheet"/>
+  <style>
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+    :root {
+      --nav-height: 64px;
+      --max-width: 1400px;
+      --buhler-teal: #009ca6;
+      --text-dark: #1a1a1a;
+      --text-gray: #555;
+      --white: #fff;
+      --bg-light: #f5f5f5;
+    }
+    html { scroll-behavior: smooth; }
+    body { font-family: 'Roboto', 'Noto Sans', sans-serif; color: var(--text-dark); background: var(--white); line-height: 1.6; overflow-x: hidden; }
+    a { text-decoration: none; color: inherit; }
+    ul, li { list-style: none; }
+    img { max-width: 100%; display: block; }
+    button { cursor: pointer; border: none; background: none; font-family: inherit; }
+
+    /* ====== NAVBAR ====== */
+    .navbar { position: fixed; top: 0; left: 0; right: 0; z-index: 1000; height: auto; background: linear-gradient(to right, #003b5c, #00a6a6, #a8d400); padding: 20px 0; }
+    .navbar-inner { max-width: var(--max-width); margin: 0 auto; padding: 0 40px; height: 100%; display: flex; align-items: center; justify-content: space-between; }
+    .navbar-logo svg { height: 36px; }
+    .nav-menu { display: flex; align-items: center; height: 100%; }
+    .nav-menu > li { position: static; height: 100%; display: flex; align-items: center; }
+    .nav-menu > li > a { color: var(--white); font-size: 15px; font-weight: 400; padding: 0 22px; height: 100%; display: flex; align-items: center; transition: background 0.2s; letter-spacing: 0.2px; }
+    .nav-menu > li:hover > a { background: rgba(255,255,255,0.12); }
+    .nav-right { display: flex; align-items: center; gap: 20px; }
+    .nav-search-btn { color: var(--white); padding: 8px; display: flex; align-items: center; }
+    .nav-search-btn svg { width: 22px; height: 22px; }
+    .nav-lang-btn { color: var(--white); font-size: 15px; display: flex; align-items: center; gap: 6px; }
+    .nav-lang-btn svg { width: 14px; height: 14px; }
+    .nav-mybuhler { color: var(--white); font-size: 14px; display: flex; align-items: center; gap: 6px; }
+    .nav-mybuhler svg { width: 16px; height: 16px; }
+    .mobile-toggle { display: none; flex-direction: column; gap: 5px; padding: 8px; }
+    .mobile-toggle span { display: block; width: 24px; height: 2px; background: var(--white); }
+
+    /* ====== DROPDOWN ====== */
+    .dropdown-panel { position: absolute; top: 100%; left: 0; right: 0; background: var(--white); box-shadow: 0 8px 32px rgba(0,0,0,0.12); opacity: 0; visibility: hidden; transform: translateY(-8px); transition: opacity 0.25s, visibility 0.25s, transform 0.25s; z-index: 999; max-height: 80vh; overflow-y: auto; }
+    .nav-menu > li:hover .dropdown-panel { opacity: 1; visibility: visible; transform: translateY(0); }
+    .dropdown-inner { max-width: var(--max-width); margin: 0 auto; padding: 36px 40px 40px; display: flex; gap: 40px; }
+    .dropdown-links-section { flex: 0 0 auto; }
+    .dropdown-links-title { font-size: 13px; font-weight: 700; color: var(--text-dark); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 16px; }
+    .dropdown-columns { display: flex; gap: 48px; }
+    .dropdown-col { display: flex; flex-direction: column; gap: 14px; min-width: 160px; }
+    .dropdown-col a { font-size: 15px; color: var(--text-dark); transition: color 0.2s; line-height: 1.4; }
+    .dropdown-col a:hover { color: var(--buhler-teal); }
+    .dropdown-col a.bold { font-weight: 600; }
+    .dropdown-divider { width: 1px; background: #e0e0e0; align-self: stretch; }
+    .dropdown-highlights { flex: 1; }
+    .dropdown-highlights-title { font-family: 'Noto Serif', serif; font-size: 18px; font-weight: 400; font-style: italic; color: var(--text-dark); margin-bottom: 16px; }
+    .highlights-grid { display: flex; gap: 16px; }
+    .highlight-card { flex: 1; border-radius: 8px; overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,0.06); transition: box-shadow 0.2s, transform 0.2s; background: var(--white); }
+    .highlight-card:hover { box-shadow: 0 4px 16px rgba(0,0,0,0.12); transform: translateY(-2px); }
+    .highlight-card img { width: 100%; height: 160px; object-fit: cover; }
+    .highlight-card .hl-text { padding: 12px 14px; font-size: 14px; font-weight: 500; color: var(--text-dark); line-height: 1.4; }
+
+    /* ====== HERO ====== */
+    .hero { margin-top: 76px; position: relative; width: 100%; min-height: 480px; background: linear-gradient(135deg, #004d5a 0%, #1a8a6e 45%, #b5cc18 100%); display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 60px 40px 120px; overflow: visible; }
+    .hero::before { content: ''; position: absolute; top: 0; right: 0; width: 50%; height: 100%; background: radial-gradient(ellipse at 80% 30%, rgba(180,210,30,0.25) 0%, transparent 60%); pointer-events: none; }
+    .hero::after { content: ''; position: absolute; bottom: -60px; left: 0; right: 0; height: 120px; background: var(--white); border-radius: 50% 50% 0 0 / 100% 100% 0 0; z-index: 1; }
+    .hero h1 { font-family: 'Noto Serif', serif; font-size: clamp(36px, 5vw, 60px); color: var(--white); font-weight: 400; text-align: center; margin-bottom: 32px; position: relative; z-index: 2; font-style: italic; }
+    .hero-search { position: relative; z-index: 2; width: 100%; max-width: 620px; }
+    .hero-search input { width: 100%; padding: 18px 56px 18px 28px; border: none; border-radius: 6px; font-size: 16px; font-family: inherit; background: var(--white); box-shadow: 0 4px 24px rgba(0,0,0,0.1); outline: none; color: var(--text-dark); }
+    .hero-search input::placeholder { color: #999; }
+    .hero-search-icon { position: absolute; right: 16px; top: 50%; transform: translateY(-50%); color: var(--buhler-teal); display: flex; }
+    .hero-search-icon svg { width: 24px; height: 24px; }
+
+    /* ====== CAROUSEL ====== */
+    .carousel-section { position: relative; z-index: 5; margin-top: -80px; padding-bottom: 40px; }
+    .carousel-container { max-width: var(--max-width); margin: 0 auto; padding: 0 60px; position: relative; }
+    .carousel-track-wrapper { overflow: hidden; }
+    .carousel-track { display: flex; gap: 24px; transition: transform 0.5s cubic-bezier(0.4,0,0.2,1); }
+    .carousel-card { flex: 0 0 calc(33.333% - 16px); background: var(--white); border-radius: 12px; overflow: hidden; box-shadow: 0 4px 20px rgba(0,0,0,0.08); transition: transform 0.3s, box-shadow 0.3s; }
+    .carousel-card:hover { transform: translateY(-4px); box-shadow: 0 8px 32px rgba(0,0,0,0.14); }
+    .carousel-card img { width: 100%; height: 240px; object-fit: cover; }
+    .carousel-card h5 { padding: 18px 20px; font-size: 15px; font-weight: 500; color: var(--text-dark); line-height: 1.5; }
+    .carousel-arrow { position: absolute; top: 50%; transform: translateY(-50%); width: 48px; height: 48px; border-radius: 50%; background: rgba(255,255,255,0.9); box-shadow: 0 2px 12px rgba(0,0,0,0.1); display: flex; align-items: center; justify-content: center; z-index: 10; transition: background 0.2s, box-shadow 0.2s; color: var(--text-dark); }
+    .carousel-arrow:hover { background: var(--white); box-shadow: 0 4px 20px rgba(0,0,0,0.15); }
+    .carousel-arrow svg { width: 28px; height: 28px; stroke-width: 1.5; }
+    .carousel-prev { left: 8px; }
+    .carousel-next { right: 8px; }
+
+    /* ====== CONTENT SECTIONS ====== */
+    .section { padding: 50px 0; }
+    .container { max-width: var(--max-width); margin: 0 auto; padding: 0 40px; }
+    .section-headline { font-family: 'Noto Serif', serif; font-size: clamp(24px, 3vw, 34px); color: #003399; font-weight: 400; margin-bottom: 14px; }
+    .section-body { font-size: 16px; color: var(--text-gray); max-width: 800px; line-height: 1.7; margin-bottom: 20px; }
+    .cta-link { display: inline-flex; align-items: center; gap: 8px; color: #003399; font-size: 15px; font-weight: 500; transition: gap 0.3s; }
+    .cta-link:hover { gap: 12px; }
+    .cta-link svg { width: 18px; height: 18px; }
+
+    /* Solutions grid */
+    .solutions-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-top: 20px; }
+    .solution-item { display: flex; align-items: center; gap: 12px; padding: 10px 12px; border-radius: 6px; transition: background 0.2s; }
+    .solution-item:hover { background: #f0f4f8; }
+    .solution-item img { width: 50px; height: 30px; object-fit: contain; flex-shrink: 0; }
+    .solution-item span { font-size: 14px; font-weight: 500; color: var(--text-dark); line-height: 1.3; }
+    .solutions-toggle { display: flex; justify-content: center; margin-top: 16px; }
+    .toggle-btn { width: 44px; height: 44px; border-radius: 50%; border: 2px solid #003399; color: #003399; font-size: 28px; display: flex; align-items: center; justify-content: center; transition: all 0.3s; line-height: 1; }
+    .toggle-btn:hover { background: #003399; color: var(--white); }
+
+    /* Teaser cards */
+    .teaser-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; margin-top: 24px; }
+    .teaser-card { border-radius: 8px; overflow: hidden; box-shadow: 0 2px 12px rgba(0,0,0,0.06); background: var(--white); transition: transform 0.3s, box-shadow 0.3s; }
+    .teaser-card:hover { transform: translateY(-4px); box-shadow: 0 8px 28px rgba(0,0,0,0.1); }
+    .teaser-card img { width: 100%; height: 220px; object-fit: cover; }
+    .teaser-body { padding: 20px; }
+    .teaser-preline { font-size: 12px; text-transform: uppercase; letter-spacing: 1px; color: var(--buhler-teal); font-weight: 600; margin-bottom: 6px; }
+    .teaser-body h4 { font-size: 18px; font-weight: 600; color: var(--text-dark); margin-bottom: 8px; line-height: 1.4; }
+    .teaser-body p { font-size: 14px; color: #666; line-height: 1.6; }
+
+    /* Video */
+    .video-section { background: var(--bg-light); padding: 50px 0 60px; }
+    .video-section h2 { font-family: 'Noto Serif', serif; font-size: clamp(24px,3vw,34px); color: #003399; font-weight: 400; margin-bottom: 28px; }
+    .video-layout { display: grid; grid-template-columns: 1.6fr 1fr; gap: 24px; align-items: start; }
+    .video-main { border-radius: 10px; overflow: hidden; background: #000; aspect-ratio: 16/9; }
+    .video-main iframe { width: 100%; height: 100%; border: none; }
+    .video-sidebar h3 { font-size: 16px; font-weight: 600; margin-bottom: 12px; }
+    .video-list { display: flex; flex-direction: column; gap: 8px; max-height: 420px; overflow-y: auto; }
+    .video-list::-webkit-scrollbar { width: 4px; }
+    .video-list::-webkit-scrollbar-thumb { background: #ccc; border-radius: 4px; }
+    .video-item { display: flex; gap: 12px; padding: 10px; border-radius: 8px; cursor: pointer; transition: background 0.2s; }
+    .video-item:hover { background: #e4e4e4; }
+    .video-item.active { background: #d9e4ef; }
+    .video-item img { width: 110px; height: 65px; object-fit: cover; border-radius: 4px; flex-shrink: 0; }
+    .video-item-info p { font-size: 13px; font-weight: 500; line-height: 1.4; margin-bottom: 4px; }
+    .video-item-info span { font-size: 12px; color: #888; }
+
+    /* FABs */
+    .contact-fab { position: fixed; bottom: 28px; right: 28px; z-index: 998; width: 56px; height: 56px; border-radius: 50%; background: var(--buhler-teal); color: var(--white); box-shadow: 0 4px 16px rgba(0,0,0,0.2); display: flex; align-items: center; justify-content: center; transition: transform 0.2s; }
+    .contact-fab:hover { transform: scale(1.08); }
+    .contact-fab svg { width: 26px; height: 26px; }
+    .shapes-fab { position: fixed; bottom: 28px; left: 28px; z-index: 998; width: 48px; height: 48px; border-radius: 50%; background: var(--buhler-teal); color: var(--white); box-shadow: 0 4px 16px rgba(0,0,0,0.15); display: flex; align-items: center; justify-content: center; }
+    .shapes-fab svg { width: 22px; height: 22px; }
+
+    /* Footer */
+    .footer { background: #1a1a2e; color: #bbb; padding: 60px 0 30px; }
+    .footer-grid { display: grid; grid-template-columns: 1.2fr 1fr 1fr 1fr; gap: 40px; margin-bottom: 40px; }
+    .footer-logo svg { height: 30px; margin-bottom: 16px; }
+    .footer h5 { font-size: 13px; font-weight: 700; color: var(--white); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 16px; }
+    .footer-links { display: flex; flex-direction: column; gap: 10px; }
+    .footer-links a { font-size: 14px; color: #999; transition: color 0.2s; }
+    .footer-links a:hover { color: var(--white); }
+    .footer-bottom { border-top: 1px solid rgba(255,255,255,0.08); padding-top: 24px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 16px; }
+    .footer-legal { display: flex; gap: 18px; flex-wrap: wrap; }
+    .footer-legal a { font-size: 13px; color: #777; transition: color 0.2s; }
+    .footer-legal a:hover { color: var(--white); }
+    .footer-social { display: flex; gap: 12px; }
+    .footer-social a { width: 36px; height: 36px; border-radius: 50%; border: 1px solid rgba(255,255,255,0.15); display: flex; align-items: center; justify-content: center; color: #999; font-size: 14px; transition: all 0.2s; }
+    .footer-social a:hover { background: rgba(255,255,255,0.1); color: var(--white); }
+    .back-to-top { display: flex; align-items: center; gap: 8px; color: #999; font-size: 12px; font-weight: 500; letter-spacing: 1.5px; margin-top: 24px; justify-content: flex-end; transition: color 0.2s; }
+    .back-to-top:hover { color: var(--white); }
+    .back-to-top svg { width: 16px; height: 16px; }
+
+    /* Responsive */
+    @media (max-width: 1100px) { .solutions-grid { grid-template-columns: repeat(3, 1fr); } }
+    @media (max-width: 1024px) {
+      .nav-menu { display: none; }
+      .navbar-inner { padding: 0 20px; }
+      .container { padding: 0 20px; }
+      .mobile-toggle { display: flex !important; }
+      .solutions-grid { grid-template-columns: repeat(2, 1fr); }
+      .video-layout { grid-template-columns: 1fr; }
+      .footer-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+    @media (max-width: 768px) {
+      .teaser-grid { grid-template-columns: 1fr; }
+      .carousel-card { flex: 0 0 90% !important; }
+      .footer-grid { grid-template-columns: 1fr; }
+      .footer-bottom { flex-direction: column; align-items: flex-start; }
+    }
+    @media (max-width: 480px) { .solutions-grid { grid-template-columns: 1fr; } .hero h1 { font-size: 28px; } }
+  </style>
+</head>
+<body>
+
+  <!-- NAVBAR -->
+  <nav class="navbar" id="navbar">
+    <div class="navbar-inner">
+      <a href="#" class="navbar-logo">
+        <img src="Logo.svg" alt="Bühler" style="height:36px;width:auto;" />
+      </a>
+      <ul class="nav-menu" id="navMenu">
+        <!-- Solutions -->
+        <li><a href="#">Solutions</a>
+          <div class="dropdown-panel"><div class="dropdown-inner">
+            <div class="dropdown-links-section">
+              <div class="dropdown-links-title">Food, feed &amp; confectionery</div>
+              <div class="dropdown-columns">
+                <div class="dropdown-col"><a href="#">Alternative proteins &amp; food ingredients</a><a href="#">Animal feed</a><a href="#">Aqua feed</a><a href="#">Baked goods</a><a href="#">Biomass</a><a href="#">Biorefinery</a><a href="#">Breakfast cereals</a><a href="#">Cocoa &amp; chocolate</a><a href="#">Coffee</a><a href="#">Confectionery &amp; snacks</a></div>
+                <div class="dropdown-col"><a href="#">Dairy</a><a href="#">Dried fruits &amp; vegetables</a><a href="#">Insect technology</a><a href="#">Nuts</a><a href="#">Oilseeds</a><a href="#">Pasta</a><a href="#">Pet food</a><a href="#">Pulses &amp; spices</a><a href="#">Rice &amp; paddy</a><a href="#">Wheat &amp; grain</a></div>
+              </div>
+            </div>
+            <div class="dropdown-divider"></div>
+            <div class="dropdown-links-section">
+              <div class="dropdown-links-title">Advanced materials</div>
+              <div class="dropdown-columns">
+                <div class="dropdown-col"><a href="#" class="bold">Batteries</a><a href="#" class="bold">Grinding &amp; Dispersing</a><a href="#">Chemicals &amp; cosmetics</a><a href="#">Digital inks</a><a href="#">Electronic materials</a><a href="#">Paints &amp; coatings</a><a href="#">Printing inks</a><a href="#" class="bold">Die casting</a></div>
+                <div class="dropdown-col"><a href="#" class="bold">Leybold Optics</a><a href="#">Glass coating</a><a href="#">Flexible electronics</a><a href="#">Flexible packaging</a><a href="#">Ophthalmic optics</a><a href="#">Precision optics</a><a href="#">Semiconductors</a><a href="#">Technology components</a></div>
+              </div>
+            </div>
+          </div></div>
+        </li>
+        <!-- Services -->
+        <li><a href="#">Services</a>
+          <div class="dropdown-panel"><div class="dropdown-inner">
+            <div class="dropdown-links-section"><div class="dropdown-columns">
+              <div class="dropdown-col"><a href="#">Maintenance</a><a href="#">Expert services</a><a href="#">Hardware</a><a href="#">Installation services</a></div>
+              <div class="dropdown-col"><a href="#">Knowledge services</a><a href="#">Process Optimization</a><a href="#">Upgrades</a><a href="#">24/7 Hotline</a></div>
+            </div></div>
+            <div class="dropdown-divider"></div>
+            <div class="dropdown-highlights"><div class="dropdown-highlights-title">Highlights</div>
+              <div class="highlights-grid">
+                <a href="#" class="highlight-card"><img src="https://dam.buhlergroup.com/rendition/f29b71a573e94f949daafe3d0af0ea8c/-FJPG-TwebTeaser_4x3" alt=""/><div class="hl-text">Application &amp; Training Centers</div></a>
+                <a href="#" class="highlight-card"><img src="https://dam.buhlergroup.com/rendition/02dd51653bc447ca8f94d02e0eee2992/-FJPG-TwebTeaser_4x3" alt=""/><div class="hl-text">Services in general</div></a>
+                <a href="#" class="highlight-card"><img src="https://dam.buhlergroup.com/rendition/0a4591a2a4f240d9a63a65b27dc4af5e/-FJPG-TwebTeaser_4x3" alt=""/><div class="hl-text">Explore Digital Services</div></a>
+              </div>
+            </div>
+          </div></div>
+        </li>
+        <!-- Inspiration -->
+        <li><a href="#">Inspiration</a>
+          <div class="dropdown-panel"><div class="dropdown-inner">
+            <div class="dropdown-links-section"><div class="dropdown-columns">
+              <div class="dropdown-col"><a href="#">Climate protection</a><a href="#">Digitalization</a><a href="#">Food safety</a><a href="#">Generation B</a></div>
+              <div class="dropdown-col"><a href="#">Mobility</a><a href="#">Nutrition</a><a href="#">Resource efficiency</a><a href="#">Sustainability</a></div>
+            </div></div>
+            <div class="dropdown-divider"></div>
+            <div class="dropdown-highlights"><div class="dropdown-highlights-title">Highlights</div>
+              <div class="highlights-grid">
+                <a href="#" class="highlight-card"><img src="https://dam.buhlergroup.com/rendition/6c08b1e609a943d2965f158751b45d1d/-FJPG-TwebTeaser_4x3" alt=""/><div class="hl-text">What's your footprint?</div></a>
+                <a href="#" class="highlight-card"><img src="https://dam.buhlergroup.com/rendition/1608979/-FJPG-TwebTeaser_4x3" alt=""/><div class="hl-text">Lifelong Learning</div></a>
+                <a href="#" class="highlight-card"><img src="https://dam.buhlergroup.com/rendition/79e406b762384e08a5c9e59968119f85/-FJPG-TwebTeaser_4x3" alt=""/><div class="hl-text">Our sustainability goals</div></a>
+              </div>
+            </div>
+          </div></div>
+        </li>
+        <!-- News -->
+        <li><a href="#">News</a>
+          <div class="dropdown-panel"><div class="dropdown-inner">
+            <div class="dropdown-links-section"><div class="dropdown-columns">
+              <div class="dropdown-col"><a href="#">Annual Report 2025</a><a href="#">Events &amp; Webinars</a><a href="#">Inspiration Hub</a></div>
+              <div class="dropdown-col"><a href="#">Media corner</a><a href="#">Publications</a></div>
+            </div></div>
+            <div class="dropdown-divider"></div>
+            <div class="dropdown-highlights"><div class="dropdown-highlights-title">Highlights</div>
+              <div class="highlights-grid">
+                <a href="#" class="highlight-card"><img src="https://dam.buhlergroup.com/rendition/1690749/-FJPG-TwebTeaser_4x3" alt=""/><div class="hl-text">Bühler Networking Days 2025</div></a>
+                <a href="#" class="highlight-card"><img src="https://dam.buhlergroup.com/rendition/1775932/-FJPG-TwebTeaser_4x3" alt=""/><div class="hl-text">Visit our 2025 Annual Report page</div></a>
+                <a href="#" class="highlight-card"><img src="https://dam.buhlergroup.com/rendition/1723767/-FJPG-TwebTeaser_4x3" alt=""/><div class="hl-text">Diagram 191: Download the latest issue</div></a>
+              </div>
+            </div>
+          </div></div>
+        </li>
+        <!-- Careers -->
+        <li><a href="#">Careers</a>
+          <div class="dropdown-panel"><div class="dropdown-inner">
+            <div class="dropdown-links-section"><div class="dropdown-columns">
+              <div class="dropdown-col"><a href="#" class="bold">Purpose &amp; Community</a><a href="#">About Bühler</a><a href="#">Our values</a><a href="#">Benefits</a><a href="#">Lifelong learning</a></div>
+              <div class="dropdown-col"><a href="#">Diversity, equity &amp; inclusion</a><a href="#">Application process</a><a href="#">Apprenticeship</a><a href="#">Early careers</a><a href="#">People stories</a></div>
+            </div></div>
+            <div class="dropdown-divider"></div>
+            <div class="dropdown-highlights"><div class="dropdown-highlights-title">Highlights</div>
+              <div class="highlights-grid">
+                <a href="#" class="highlight-card"><img src="https://dam.buhlergroup.com/rendition/1637048/-FJPG-TwebTeaser_4x3" alt=""/><div class="hl-text">See all jobs</div></a>
+                <a href="#" class="highlight-card"><img src="https://dam.buhlergroup.com/rendition/1624517/-FJPG-TwebTeaser_4x3" alt=""/><div class="hl-text">Locations</div></a>
+                <a href="#" class="highlight-card"><img src="https://dam.buhlergroup.com/rendition/1622557/-FJPG-TwebTeaser_4x3" alt=""/><div class="hl-text">Career Paths</div></a>
+              </div>
+            </div>
+          </div></div>
+        </li>
+        <!-- About us -->
+        <li><a href="#">About us</a>
+          <div class="dropdown-panel"><div class="dropdown-inner">
+            <div class="dropdown-links-section"><div class="dropdown-columns">
+              <div class="dropdown-col"><a href="#">About us</a><a href="#">Ad hoc announcements</a><a href="#">Channel partners</a><a href="#">Contact us</a><a href="#">Corporate Governance</a></div>
+              <div class="dropdown-col"><a href="#">Corporate policies</a><a href="#">Our organization</a><a href="#">Startup collaborations</a><a href="#">Supplying to Bühler</a></div>
+            </div></div>
+            <div class="dropdown-divider"></div>
+            <div class="dropdown-highlights"><div class="dropdown-highlights-title">Highlights</div>
+              <div class="highlights-grid">
+                <a href="#" class="highlight-card"><img src="https://dam.buhlergroup.com/rendition/8bde69e2749d4d88a55ecefdae9044db/-FJPG-TwebTeaser_4x3" alt=""/><div class="hl-text">Our locations</div></a>
+                <a href="#" class="highlight-card"><img src="https://dam.buhlergroup.com/rendition/78de131472144bb3a8bf49e1af042648/-FJPG-TwebTeaser_4x3" alt=""/><div class="hl-text">Media corner</div></a>
+                <a href="#" class="highlight-card"><img src="https://dam.buhlergroup.com/rendition/071e1f5c158e4264ac3e913c0a921833/-FJPG-TwebTeaser_4x3" alt=""/><div class="hl-text">Contact us</div></a>
+              </div>
+            </div>
+          </div></div>
+        </li>
+      </ul>
+      <div class="nav-right">
+        <button class="nav-search-btn" aria-label="Search"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></button>
+        <button class="nav-lang-btn">EN <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg></button>
+        <a href="#" class="nav-mybuhler">myBühler <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg></a>
+        <button class="mobile-toggle" aria-label="Menu"><span></span><span></span><span></span></button>
+      </div>
+    </div>
+  </nav>
+
+  <!-- HERO -->
+  <section class="hero">
+    <h1>Innovations for a better world</h1>
+    <div class="hero-search">
+      <input type="search" placeholder="I am interested in..."/>
+      <span class="hero-search-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></span>
+    </div>
+  </section>
+
+  <!-- CAROUSEL -->
+  <section class="carousel-section">
+    <div class="carousel-container">
+      <button class="carousel-arrow carousel-prev" id="carouselPrev"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><polyline points="15 18 9 12 15 6"/></svg></button>
+      <div class="carousel-track-wrapper">
+        <div class="carousel-track" id="carouselTrack">
+          <a href="#" class="carousel-card"><img src="https://dam.buhlergroup.com/rendition/1817446/-FJPG-TwebTeaser_4x3-S800x600" alt=""/><h5>Bühler presents new editions of two icons in chocolate mass processing</h5></a>
+          <a href="#" class="carousel-card"><img src="https://dam.buhlergroup.com/rendition/1816700/-FJPG-TwebTeaser_4x3-S800x600" alt=""/><h5>Bühler launches innovations and releases major upgrades to its Grains &amp; Food portfolio</h5></a>
+          <a href="#" class="carousel-card"><img src="https://dam.buhlergroup.com/rendition/1807067/-FJPG-TwebTeaser_4x3-S800x600" alt=""/><h5>Bühler ushers in a new era of extrusion systems with Nutrex 7 Series</h5></a>
+          <a href="#" class="carousel-card"><img src="https://dam.buhlergroup.com/rendition/1775932/-FJPG-TwebTeaser_4x3-S800x600" alt=""/><h5>Bühler strengthens its market position</h5></a>
+          <a href="#" class="carousel-card"><img src="https://dam.buhlergroup.com/rendition/a05122e359a84d08b5e786d8ef4a9dba/-FJPG-TwebTeaser_4x3-S800x600" alt=""/><h5>Samuel Schär is the new CEO of Bühler Group</h5></a>
+          <a href="#" class="carousel-card"><img src="https://dam.buhlergroup.com/rendition/8254295f1798426b9e2510f46717626d/-FJPG-TwebTeaser_4x3-S800x600" alt=""/><h5>Pow.Bio and Bühler join forces to advance next-generation precision fermentation</h5></a>
+        </div>
+      </div>
+      <button class="carousel-arrow carousel-next" id="carouselNext"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><polyline points="9 18 15 12 9 6"/></svg></button>
+    </div>
+  </section>
+
+  <!-- BÜHLER IN YOUR LIFE -->
+  <section class="section"><div class="container">
+    <h2 class="section-headline">Bühler in your life</h2>
+    <p class="section-body">Every day, billions of people come into contact with Bühler technologies to cover their basic needs for food and mobility, and more. Our technologies are in your smartphone, solar panels, diapers, lipstick, banknotes, the foods you eat, and the vehicles you drive. We strive to create innovations for a better world, with a special focus on healthy, safe, and sustainable solutions.</p>
+    <a href="#" class="cta-link"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"/></svg>How Bühler touches everyday lives</a>
+  </div></section>
+
+  <!-- SOLUTIONS -->
+  <section class="section" style="padding-top:0;"><div class="container">
+    <h2 class="section-headline">Solutions for your industries</h2>
+    <p class="section-body">Explore innovative solutions for the food &amp; feed, as well as the advanced materials industry.</p>
+    <div class="solutions-grid" id="solutionsGrid">
+      <a href="#" class="solution-item"><img src="https://dam.buhlergroup.com/rendition/093a5eb4122d42fea0f75f842ec141f5/-FPNG-TwebTeaser_16x9-S70x40" alt=""/><span>Animal feed</span></a>
+      <a href="#" class="solution-item"><img src="https://dam.buhlergroup.com/rendition/3ca30e6396904b75afcca1d82aa9e504/-FPNG-TwebTeaser_16x9-S70x40" alt=""/><span>Architectural / automotive glass coating</span></a>
+      <a href="#" class="solution-item"><img src="https://dam.buhlergroup.com/rendition/03ca554528bc4b1ea54c300b53a49c8e/-FPNG-TwebTeaser_16x9-S70x40" alt=""/><span>Alternative proteins &amp; food ingredients</span></a>
+      <a href="#" class="solution-item"><img src="https://dam.buhlergroup.com/rendition/1ef79d6a968a46e09e1bca7bd2e24c36/-FPNG-TwebTeaser_16x9-S70x40" alt=""/><span>Aqua Feed</span></a>
+      <a href="#" class="solution-item"><img src="https://dam.buhlergroup.com/rendition/b4f545bffdba44679c679372af128b77/-FPNG-TwebTeaser_16x9-S70x40" alt=""/><span>Automotive</span></a>
+      <a href="#" class="solution-item"><img src="https://dam.buhlergroup.com/rendition/843125906eb8492fbb2f16d6affbba5d/-FPNG-TwebTeaser_16x9-S70x40" alt=""/><span>Baked goods</span></a>
+      <a href="#" class="solution-item"><img src="https://dam.buhlergroup.com/rendition/983a488e0621490eb70f4ba476ccaa39/-FPNG-TwebTeaser_16x9-S70x40" alt=""/><span>Batteries</span></a>
+      <a href="#" class="solution-item"><img src="https://dam.buhlergroup.com/rendition/54e7fc450b7744a98ff77cd343feb3ff/-FPNG-TwebTeaser_16x9-S70x40" alt=""/><span>Biomass</span></a>
+      <a href="#" class="solution-item extra" style="display:none;"><img src="https://dam.buhlergroup.com/rendition/b1875b695c86470aa424e87235ebf2c6/-FPNG-TwebTeaser_16x9-S70x40" alt=""/><span>Bio refinery</span></a>
+      <a href="#" class="solution-item extra" style="display:none;"><img src="https://dam.buhlergroup.com/rendition/d30a3ad8fce74ddc885fb842bc40dc0d/-FPNG-TwebTeaser_16x9-S70x40" alt=""/><span>Brewing</span></a>
+      <a href="#" class="solution-item extra" style="display:none;"><img src="https://dam.buhlergroup.com/rendition/d0e9477f35f14cbd970a43d24b47a2fd/-FPNG-TwebTeaser_16x9-S70x40" alt=""/><span>Breakfast cereals</span></a>
+      <a href="#" class="solution-item extra" style="display:none;"><img src="https://dam.buhlergroup.com/rendition/2d3a01dc2a3e4512b4dd7847422a81cd/-FPNG-TwebTeaser_16x9-S70x40" alt=""/><span>Cocoa and chocolate</span></a>
+      <a href="#" class="solution-item extra" style="display:none;"><img src="https://dam.buhlergroup.com/rendition/f476b2dc038349f08634536ed54ae6bf/-FPNG-TwebTeaser_16x9-S70x40" alt=""/><span>Coffee</span></a>
+      <a href="#" class="solution-item extra" style="display:none;"><img src="https://dam.buhlergroup.com/rendition/429fec17880348d28bed00d50d89ff1a/-FPNG-TwebTeaser_16x9-S70x40" alt=""/><span>Dairy</span></a>
+      <a href="#" class="solution-item extra" style="display:none;"><img src="https://dam.buhlergroup.com/rendition/b5bfe920e43c438e92f6bf2183e723df/-FPNG-TwebTeaser_16x9-S70x40" alt=""/><span>Die casting</span></a>
+      <a href="#" class="solution-item extra" style="display:none;"><img src="https://dam.buhlergroup.com/rendition/7bb50db299274fbca1934342dd18351a/-FPNG-TwebTeaser_16x9-S70x40" alt=""/><span>Pasta</span></a>
+      <a href="#" class="solution-item extra" style="display:none;"><img src="https://dam.buhlergroup.com/rendition/ec7b68217d3d41b88134c586c986fe3f/-FPNG-TwebTeaser_16x9-S70x40" alt=""/><span>Pet food</span></a>
+      <a href="#" class="solution-item extra" style="display:none;"><img src="https://dam.buhlergroup.com/rendition/c8d5bee0789f47ca834f9d12d42ba0c1/-FPNG-TwebTeaser_16x9-S70x40" alt=""/><span>Rice and paddy</span></a>
+      <a href="#" class="solution-item extra" style="display:none;"><img src="https://dam.buhlergroup.com/rendition/133f6e537e184f98ab0259350f953c8b/-FPNG-TwebTeaser_16x9-S70x40" alt=""/><span>Wheat and grain</span></a>
+      <a href="#" class="solution-item extra" style="display:none;"><img src="https://dam.buhlergroup.com/rendition/6344ebfc4844439c827f3d7fa3ca76f7/-FPNG-TwebTeaser_16x9-S70x40" alt=""/><span>Wet grinding and dispersing</span></a>
+    </div>
+    <div class="solutions-toggle"><button class="toggle-btn" id="toggleSolutions">+</button></div>
+  </div></section>
+
+  <!-- CONNECT -->
+  <section class="section" style="padding-top:0;"><div class="container">
+    <h2 class="section-headline">Connect with Bühler worldwide</h2>
+    <div class="teaser-grid">
+      <a href="#" class="teaser-card"><img src="https://dam.buhlergroup.com/rendition/1625518/-FJPG-TwebTeaser_4x3" alt=""/><div class="teaser-body"><p class="teaser-preline">Services</p><h4>Bühler Services</h4><p>We work 24/7 so your business can work full time too.</p></div></a>
+      <a href="#" class="teaser-card"><img src="https://dam.buhlergroup.com/rendition/1634382/-FJPG-TwebTeaser_4x3" alt=""/><div class="teaser-body"><p class="teaser-preline">Careers</p><h4>Be part of Bühler!</h4><p>Join our global network of innovations and solutions.</p></div></a>
+      <a href="#" class="teaser-card"><img src="https://dam.buhlergroup.com/rendition/0b016144e123497fad33c0e090e15ba9/-FJPG-TwebTeaser_4x3" alt=""/><div class="teaser-body"><p class="teaser-preline">Networking</p><h4>Events and webinars</h4><p>Connect with Bühler technology and experts physically and digitally.</p></div></a>
+    </div>
+    <div class="teaser-grid" style="margin-top:24px;">
+      <a href="#" class="teaser-card"><img src="https://dam.buhlergroup.com/rendition/6b189ae7d6934bfe9fdf81c6e892107c/-FJPG-TwebTeaser_4x3" alt=""/><div class="teaser-body"><p class="teaser-preline">Global network</p><h4>Discover our locations</h4><p>Repairs, maintenance, training - find the nearest service station in your region.</p></div></a>
+      <a href="#" class="teaser-card"><img src="https://dam.buhlergroup.com/rendition/e54eab5b827e421988c998b19eeebdf2/-FJPG-TwebTeaser_4x3" alt=""/><div class="teaser-body"><p class="teaser-preline">Cooperations</p><h4>Channel Partner Program</h4><p>Good cooperation with our resellers is important to us.</p></div></a>
+      <a href="#" class="teaser-card"><img src="https://dam.buhlergroup.com/rendition/1687559/-FJPG-TwebTeaser_4x3" alt=""/><div class="teaser-body"><p class="teaser-preline">Inspiration Hub</p><h4>Milling training redefined</h4><p>The Milling Academy for food and feed underscores the importance of the milling sector for Bühler.</p></div></a>
+    </div>
+  </div></section>
+
+  <!-- VIDEO -->
+  <section class="video-section"><div class="container">
+    <h2>Video highlights</h2>
+    <div class="video-layout">
+      <div class="video-main"><iframe id="mainVideo" src="https://www.youtube-nocookie.com/embed/3mCCGAsRPcc?si=ekuoq78GFUZxnUxl" allow="autoplay; encrypted-media" allowfullscreen loading="lazy"></iframe></div>
+      <div class="video-sidebar">
+        <h3>Watch next</h3>
+        <div class="video-list">
+          <div class="video-item active" data-src="https://www.youtube-nocookie.com/embed/3mCCGAsRPcc?si=ekuoq78GFUZxnUxl"><img src="https://img.youtube.com/vi/3mCCGAsRPcc/mqdefault.jpg" alt=""/><div class="video-item-info"><p>The Bühler highlights 2025</p><span>07:14</span></div></div>
+          <div class="video-item" data-src="https://www.youtube-nocookie.com/embed/fgYCYXIPFhI?si=o9GLidBSCwgMqDlm"><img src="https://img.youtube.com/vi/fgYCYXIPFhI/mqdefault.jpg" alt=""/><div class="video-item-info"><p>City Group, Bangladesh: South Asia's largest private-sector mill</p><span>03:40</span></div></div>
+          <div class="video-item" data-src="https://www.youtube-nocookie.com/embed/iBUvhLU76nk?si=NWLyPPW_Gi1JCaIJ"><img src="https://img.youtube.com/vi/iBUvhLU76nk/mqdefault.jpg" alt=""/><div class="video-item-info"><p>Bühler Replay wins IoT Breakthrough Award</p><span>00:47</span></div></div>
+          <div class="video-item" data-src="https://www.youtube-nocookie.com/embed/NCOGMf1viCs?si=JLjnb2_iZG_ldfxu"><img src="https://img.youtube.com/vi/NCOGMf1viCs/mqdefault.jpg" alt=""/><div class="video-item-info"><p>Xizang Keyan: processing barley above 4000 meters</p><span>02:08</span></div></div>
+          <div class="video-item" data-src="https://www.youtube-nocookie.com/embed/t0zTnPBS75Q?si=g6G8TC9xFTVKnvOQ"><img src="https://img.youtube.com/vi/t0zTnPBS75Q/mqdefault.jpg" alt=""/><div class="video-item-info"><p>Dalloz Creations: perfection down to the nanometer</p><span>04:19</span></div></div>
+          <div class="video-item" data-src="https://www.youtube-nocookie.com/embed/-Bx_yZUt62E?si=hKrtocV8rKVivCsl"><img src="https://img.youtube.com/vi/-Bx_yZUt62E/mqdefault.jpg" alt=""/><div class="video-item-info"><p>Bühler Networking Days 2025: Wrap-up film</p><span>05:18</span></div></div>
+        </div>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- FABs -->
+  <div class="shapes-fab"><svg viewBox="0 0 24 24" fill="currentColor"><circle cx="6" cy="6" r="3"/><circle cx="18" cy="6" r="3"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="18" r="3"/></svg></div>
+  <a href="#" class="contact-fab"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg></a>
+
+  <!-- FOOTER -->
+  <footer class="footer"><div class="container">
+    <div class="footer-grid">
+      <div class="footer-logo"><img src="Logo.svg" alt="Bühler" style="height:30px;width:auto;"/></div>
+      <div><h5>Corporate Governance</h5><div class="footer-links"><a href="#">Corporate Governance</a><a href="#">Corporate policies</a><a href="#">Code of Conduct</a><a href="#">Supplier Code of Conduct</a></div></div>
+      <div><h5>About us</h5><div class="footer-links"><a href="#">About us</a><a href="#">Locations</a><a href="#">Media</a><a href="#">Jobs and career</a></div></div>
+      <div><h5>Useful links</h5><div class="footer-links"><a href="#">Contact us</a><a href="#">Channel partner program</a></div></div>
+    </div>
+    <div class="footer-bottom">
+      <div class="footer-legal"><a href="#">Privacy Policy</a><a href="#">Cookie Policy</a><a href="#">Disclaimer</a><a href="#">Imprint</a><a href="#">Information Security</a><a href="#">Youtube Privacy Policy</a></div>
+      <div class="footer-social"><a href="#">f</a><a href="#">𝕏</a><a href="#">◎</a><a href="#">in</a><a href="#">▶</a></div>
+    </div>
+    <a href="#navbar" class="back-to-top"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="18 15 12 9 6 15"/></svg>BACK TO TOP</a>
+  </div></footer>
+
+  <!-- jQuery CDN -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+
+  <script>
+    $(function () {
+
+      /* ====== CAROUSEL ====== */
+      var $track = $('#carouselTrack');
+      var $cards = $track.find('.carousel-card');
+      var pos = 0;
+
+      function getVisible() {
+        return $(window).width() < 768 ? 1 : 3;
+      }
+
+      function updateCarousel() {
+        var v   = getVisible();
+        var gap = 24;
+        var cw  = ($track.parent().outerWidth() - gap * (v - 1)) / v;
+        var max = $cards.length - v;
+
+        $cards.css('flex', '0 0 ' + cw + 'px');
+
+        pos = Math.max(0, Math.min(pos, max));
+        $track.css('transform', 'translateX(-' + (pos * (cw + gap)) + 'px)');
+      }
+
+      $('#carouselNext').on('click', function () { pos++; updateCarousel(); });
+      $('#carouselPrev').on('click', function () { pos--; updateCarousel(); });
+      $(window).on('resize', updateCarousel);
+      updateCarousel();
+
+      /* ====== SOLUTIONS TOGGLE ====== */
+      var expanded = false;
+
+      $('#toggleSolutions').on('click', function () {
+        expanded = !expanded;
+        $('.solution-item.extra').css('display', expanded ? 'flex' : 'none');
+        $(this).text(expanded ? '−' : '+');
+      });
+
+      /* ====== VIDEO SWITCHER ====== */
+      $('.video-item').on('click', function () {
+        $('.video-item').removeClass('active');
+        $(this).addClass('active');
+        $('#mainVideo').attr('src', $(this).data('src'));
+      });
+
+      /* ====== DYNAMIC NAVBAR HEIGHT FOR HERO OFFSET ====== */
+      function setHeroMargin() {
+        var navH = $('#navbar').outerHeight();
+        $('.hero').css('margin-top', navH + 'px');
+      }
+
+      setHeroMargin();
+      $(window).on('resize', setHeroMargin);
+
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,98 @@
+UPDATE materials SET is_active = 0 WHERE id = 2;
+
+
+
+
+CSS Topics You Learned
+1. Basic Layout
+
+✅ display: flex
+
+✅ flex-direction
+
+✅ justify-content
+
+✅ display: grid
+
+✅ grid-template-columns
+
+✅ gap
+
+2. Box Model
+
+✅ Margin
+
+✅ Padding
+
+✅ Border
+
+✅ box-sizing: border-box
+
+3. Positioning
+
+✅ position: relative
+
+✅ position: absolute
+
+✅ position: fixed
+
+✅ position: sticky
+
+✅ top, right, bottom, left
+
+4. Responsive Design
+
+✅ Media Queries
+
+@media (max-width: 768px)
+@media (min-width: 768px)
+5. Visibility
+
+✅ display: none
+
+✅ display: block
+
+✅ visibility: hidden
+
+6. Hover Effects
+
+✅ :hover
+
+7. Transitions
+
+✅ transition
+
+transition: 0.5s;
+8. Transform
+
+✅ scale()
+
+✅ translateX()
+
+✅ translateY()
+
+✅ rotate()
+
+9. Layering
+
+✅ z-index
+
+10. Effects
+
+✅ box-shadow
+
+11. Overflow
+
+✅ overflow: hidden
+
+✅ overflow: auto
+
+✅ overflow: scroll
+
+12. CSS Variables
+
+✅ :root
+
+✅ --primary-color
+
+✅ var()
